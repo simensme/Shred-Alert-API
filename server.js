@@ -4,13 +4,14 @@ const jwt = require('jsonwebtoken');
 const { testQuery } = require('./services/database');
 const app = express();
 const PORT = process.env.PORT || 3333;
-app.use(cors());app.use(express.json());
+
+app.use(cors());
+app.use(express.json());
 
 
 app.get('/', async (req, res) => {
-    const test = await testQuery()
-    const testResult = await test.json()
-    res.send(testResult.name);
+    const test = await testQuery();
+    res.send(test);
 });
 
 // Listening to server

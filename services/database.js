@@ -1,6 +1,6 @@
 
 const {Pool} = require('pg');
-const POSTGRES_URL = process.env.POSTGRES_URL || 'postgres://postgres:1234@localhost:3333/shreddatabase';
+const POSTGRES_URL = process.env.POSTGRES_URL || 'postgres://postgres:1234@localhost:5432/ShredTest';
 
 const database = new Pool({
     connectionString: POSTGRES_URL
@@ -13,7 +13,7 @@ async function testQuery(){
     FROM 
         users
     `);
-    return result.rows[0]
+    return result.rows[0];
 };
 
 module.exports = {
