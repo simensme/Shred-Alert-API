@@ -4,5 +4,22 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "pg": "^8.9.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "shred-alert-api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simensme/Shred-Alert-API.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/simensme/Shred-Alert-API/issues"
+  },
+  "homepage": "https://github.com/simensme/Shred-Alert-API#readme",
+  "description": ""
 }
