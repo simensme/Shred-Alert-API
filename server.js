@@ -8,9 +8,9 @@ app.use(cors());app.use(express.json());
 
 
 app.get('/', async (req, res) => {
-    const test = await testQuery();
-    const testResult = await res.json(test)
-    res.send(testResult);
+    const test = await testQuery()
+    const testResult = await test.json()
+    res.send(testResult.name);
 });
 
 // Listening to server
