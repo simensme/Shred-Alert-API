@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail } = require('./services/database');
+const { getUserByEmail, createUser } = require('./services/database');
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -50,6 +50,13 @@ app.get('/session', async (req, res) => {
   }catch(error){
     res.status(401).send({error: 'Invalid token'});
   }
+});
+
+app.post('/createuser', async (req, res) =>{
+  const  { name, email, password } = req.body;
+  await createUser(name, email, password);
+  
+  res.status(200).end();
 });
 
 // Listening to server
