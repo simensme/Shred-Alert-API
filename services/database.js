@@ -7,21 +7,21 @@ const database = new Pool({
 })
 
 
-async function getUserByUsername(username){
+async function getUserByEmail(email){
    const user = await database.query(`
     SELECT 
       * 
     FROM 
       users
     WHERE
-      username = $1;
+      email = $1;
 
-    `, [username]);
+    `, [email]);
     
     return user.rows[0];
 }
 
 module.exports = {
-    getUserByUsername,
+    getUserByEmail,
 
 }
