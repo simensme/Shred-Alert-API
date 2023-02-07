@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByUsername } = require('./services/database');
+const { getUserByEmail } = require('./services/database');
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -12,11 +12,11 @@ const APP_SECRET = 'søtt-griseri';
 
 
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try{
 
-    const user = await getUserByUsername(username);
+    const user = await getUserByEmail(email);
 
     if(!user){
       res.status(401).send({error: 'Unknown user - not found'});
@@ -30,7 +30,7 @@ app.post('/login', async (req, res) => {
 
     const token = jwt.sign({
       id: user.id,
-      username: user.username
+      email: user.email
     }, Buffer.from(APP_SECRET, 'base64'));
 
     res.json({ token });
@@ -46,7 +46,7 @@ app.get('/session', async (req, res) => {
   
   try{
     const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-    res.json({message: `You are logged in as ${payload.username}`});
+    res.json({message: `You are logged in as ${payload.name}`});
   }catch(error){
     res.status(401).send({error: 'Invalid token'});
   }
