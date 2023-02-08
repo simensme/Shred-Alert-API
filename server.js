@@ -54,9 +54,9 @@ app.get('/session', async (req, res) => {
 
 app.post('/createuser', async (req, res) =>{
   const  { name, email, password } = req.body;
-  await createUser(name, email, password);
+  const newUser = await createUser(name, email, password);
   
-  res.status(200).end();
+  res.status(200).send({newUser});
 });
 
 // Listening to server
