@@ -84,7 +84,8 @@ const compareMonitorToAPI = async () => {
     && Number(Object.values(weatherToObjArr[i].parameters[2])) > MINIMUMWINDSPEED 
     && Number(Object.values(weatherToObjArr[i].parameters[2])) < MAXIMUMWINDSPEED) {
       //WE HAVE OUR DESIRED TEMPERATURE
-      acceptableDays.push(weatherToObjArr[i].date.slice(0,10))
+      acceptableDays.push(weatherToObjArr[i].date.slice(0,10));
+      return acceptableDays;
     } return;
     */
 
