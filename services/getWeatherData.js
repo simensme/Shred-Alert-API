@@ -1,44 +1,5 @@
 // Parameterized variables for desired data.
 
-// The time period for which you want the data
-const getDates = (fromYear, fromMonth, fromDay, fromH, fromMin, toYear, toMonth, toDate, toH, toMin) => {
-    const dates = `${fromYear}-${fromMonth}-${fromDay}T${fromH}:${fromMin}:00Z--${toYear}-${toMonth}-${toDate}T${toH}:${toMin}:00Z:`;
-    console.log(dates);
-    return dates;
-}
-/*
-// Example
-getDates('2023', '02', '09', '00', '13', '2023', '02', '10', '13', '00');
-*/
-
-// How often do you want the data
-const frequency = T => {
-    const howFrequent = `PT${T}H`;
-    console.log(howFrequent);
-    return howFrequent;
-}
-/*
-// Example
-frequency('2');
-*/
-
-//Parameters that are to be included.
-// C for Celcius at 2m height
-// Precip_1h => precipitation for the past hour in mm.
-// Wind speed__2m, wind speed in meter per second.
-const PARAMS = 't_2m:C,precip_1h:mm,wind_speed_002m:ms';
-
-
-// RECEIVE GOOGLE COORDINATES HERE.
-const getCoordinates = (lat, long) => {
-    const latLong = `${lat},${long}`;
-    console.log(latLong);
-    return latLong;
-}
-/*
-getCoordinates('59.92160104865082', '10.744014548914478');
-*/
-
 // Get weather data from API
 async function getWeatherData(fromYear, fromMonth, fromDay, fromH, fromMin, toYear, toMonth, toDate, toH, toMin, freq, lat, long) {
     // Get dates
@@ -83,11 +44,12 @@ async function getWeatherData(fromYear, fromMonth, fromDay, fromH, fromMin, toYe
     return newData;
 }
 
-
+/*
+// Test to call the above function.
 getWeatherData('2023', '02', '09', '00', '13', '2023', '02', '10', '13', '00', '2', '59.92160104865082', '10.744014548914478');
-
+*/
 
 
 module.exports = {
     getWeatherData
-}
+};

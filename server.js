@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { getUserByEmail, createUser } = require('./services/database');
+const { getWeatherData } = require('./services/getWeatherData');
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -58,6 +59,26 @@ app.post('/createuser', async (req, res) =>{
   
   res.status(200).send({newUser});
 });
+
+
+/*
+// Get weather data test
+getWeatherData('2023', '02', '09', '00', '13', '2023', '02', '10', '13', '00', '2', '59.92160104865082', '10.744014548914478');
+*/
+
+
+app.post('/weather', async (req, res) => {
+  const {fromYear, fromMonth, fromDay, fromH, fromMin, toYear, toMonth, toDate, toH, toMin, freq, lat, long} = req.body;
+  const weatherBack = await getWeatherData(fromYear, fromMonth, fromDay, fromH, fromMin, toYear, toMonth, toDate, toH, toMin, freq, lat, long);
+  res.status(200).send({weatherBack});
+  console.log(weatherBack);
+})
+
+
+
+
+
+
 
 // Listening to server
 app.listen(PORT, () => {
