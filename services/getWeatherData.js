@@ -37,7 +37,7 @@ async function getWeatherData(lat, long) {
     // Adding date variables in string:
     const dates = `${yyyyStrNow}-${mmStrNow}-${ddStrNow}T${hoursNow}:${minutesNow}:00Z--${yyyyStrFuture}-${mmStrFuture}-${ddStrFuture}T${hoursFuture}:${minutesFuture}:00Z:`;
     // Time interval: every 1 Hour:
-    const howFrequent = `PT12H`;
+    const howFrequent = `PT24H`;
     // Default parameters - WE MAY CHANGE THESE LATER.
     const PARAMS = 't_2m:C,precip_1h:mm,wind_speed_002m:ms';
     // Latitude and Longitude - should have these form Gmaps.
