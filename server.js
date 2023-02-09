@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -108,7 +108,21 @@ const compareMonitorToAPI = async () => {
 
 compareMonitorToAPI();
 
-
+/* 
+POST FUNKSJON: for å opprette nye monitorer */
+app.post('/createmonitor', async (req, res) =>{
+  const token = req.headers.token;
+  const params = req.body;
+ 
+  try{   
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    const userId = payload.id;
+    createMonitor(params, userId);
+ }catch(error){
+   res.status(500).send({error: error});
+   console.log(error);
+}
+});
 
 
 
