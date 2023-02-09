@@ -70,40 +70,27 @@ const compareMonitorToAPI = async () => {
   const weatherToObjArr = await turnJsonToObjectArray(getWeather);
   // console.log(Object.values(weatherToObjArr[1].parameters[0]));
 
-  let desiredTemperature = false;
-  let desiredPrecipitation = false;
-  let desiredWind = false;
+  let acceptableDays = [];
 
-/*
-  //For TEMPERATURE
   for (let i = 0; i < weatherToObjArr.length; i++) {
-    console.log(Number(Object.values(weatherToObjArr[i].parameters[0])));
-
-    if (Number(Object.values(weatherToObjArr[i].parameters[0])) > MINIMUMTEMPERATURE && Number(Object.values(weatherToObjArr[i].parameters[0])) < MAXIMUMTEMPERATURE) {
+    console.log((weatherToObjArr[i].date).slice(0,10));
+    console.log(`Temperature: ${Number(Object.values(weatherToObjArr[i].parameters[0]))}, Precipitation: ${Number(Object.values(weatherToObjArr[i].parameters[1]))}, Windspeed: ${Number(Object.values(weatherToObjArr[i].parameters[2]))}`);
+    
+    /*
+    if (Number(Object.values(weatherToObjArr[i].parameters[0])) > MINIMUMTEMPERATURE 
+    && Number(Object.values(weatherToObjArr[i].parameters[0])) < MAXIMUMTEMPERATURE 
+    && Number(Object.values(weatherToObjArr[i].parameters[1])) > MINIMUMPRECIPITATION 
+    && Number(Object.values(weatherToObjArr[i].parameters[1])) < MAXIMUMPRECIPITATION 
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) > MINIMUMWINDSPEED 
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) < MAXIMUMWINDSPEED) {
       //WE HAVE OUR DESIRED TEMPERATURE
-      desiredTemperature = true;
+      acceptableDays.push(weatherToObjArr[i].date.slice(0,10))
     } return;
+    */
+
   };
 
-  // For PRECIPITATION
-  for (let i = 0; i < weatherToObjArr.length; i++) {
-    console.log(Number(Object.values(weatherToObjArr[i].parameters[1])));
-
-    if (Number(Object.values(weatherToObjArr[i].parameters[1])) > MINIMUMPRECIPITATION && Number(Object.values(weatherToObjArr[i].parameters[1])) < MAXIMUMPRECIPITATION) {
-      desiredPrecipitation = true;
-    } return;
-  };
-
-  // For WIND SPEED
-  for (let i = 0; i < weatherToObjArr.length; i++) {
-    console.log(Number(Object.values(weatherToObjArr[i].parameters[2])))
-
-    if (Number(Object.values(weatherToObjArr[i].parameters[2])) > MINIMUMWINDSPEED && Number(Object.values(weatherToObjArr[i].parameters[2])) < MAXIMUMWINDSPEED) {
-      desiredWind = true;
-    } return;
-  };
-
-  */
+  
 };
 
 compareMonitorToAPI();
