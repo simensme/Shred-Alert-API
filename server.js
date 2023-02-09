@@ -63,3 +63,5 @@ app.post('/createuser', async (req, res) =>{
 app.listen(PORT, () => {
     console.log(`The application is now listening to ${PORT}`)
 })
+
+
