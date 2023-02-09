@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const app = express();
 const PORT = process.env.PORT || 3333;
@@ -47,7 +47,7 @@ app.get('/session', async (req, res) => {
   
   try{
     const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-    res.json({message: `You are logged in as ${payload.name}`});
+    res.json({message: `You are logged in as ${payload.id}`});
   }catch(error){
     res.status(401).send({error: 'Invalid token'});
   }
@@ -75,7 +75,21 @@ app.post('/weather', async (req, res) => {
 })
 
 
-
+/* 
+POST FUNKSJON: for å opprette nye monitorer */
+app.post('/createmonitor', async (req, res) =>{
+  const token = req.headers.token;
+  const params = req.body;
+ 
+  try{   
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    const userId = payload.id;
+    createMonitor(params, userId);
+ }catch(error){
+   res.status(500).send({error: error});
+   console.log(error);
+}
+});
 
 
 
@@ -84,5 +98,3 @@ app.post('/weather', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`The application is now listening to ${PORT}`)
 })
-
-

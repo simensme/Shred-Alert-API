@@ -30,8 +30,30 @@ async function createUser(name, email, password){
   `, [name, email, password]);
 }
 
+async function createMonitor(params, userId){
+  database.query(`
+  INSERT INTO
+    monitor
+  VALUES
+  (Default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+  `, [userId,
+      params.shredName,
+      params.minTemp,
+      params.maxTemp,
+      params.minWind,
+      params.maxWind,
+      params.minDownPour,
+      params.maxDownPour,
+      params.minClouds,
+      params.maxClouds,
+      params.lat,
+      params.lon      
+    ]);
+}
+
 module.exports = {
     getUserByEmail,
     createUser,
-
+    createMonitor,
 }
+
