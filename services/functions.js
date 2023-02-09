@@ -1,5 +1,5 @@
 
-export function turnJsonToObjectArray(result) {
+function turnJsonToObjectArray(result) {
 
     let dates = result.data[0].coordinates[0].dates.map(date => {
         return date.date
@@ -34,4 +34,8 @@ export function turnJsonToObjectArray(result) {
         }
     }, [])
     return everything;
+}
+
+module.exports = {
+    turnJsonToObjectArray
 }

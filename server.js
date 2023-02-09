@@ -3,6 +3,7 @@ const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const { getUserByEmail, createUser } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
+const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -61,19 +62,19 @@ app.post('/createuser', async (req, res) =>{
 });
 
 
-/*
+
 // Get weather data test
-getWeatherData('2023', '02', '09', '00', '13', '2023', '02', '10', '13', '00', '2', '59.92160104865082', '10.744014548914478');
-*/
 
 
-app.post('/weather', async (req, res) => {
-  const {fromYear, fromMonth, fromDay, fromH, fromMin, toYear, toMonth, toDate, toH, toMin, freq, lat, long} = req.body;
-  const weatherBack = await getWeatherData(fromYear, fromMonth, fromDay, fromH, fromMin, toYear, toMonth, toDate, toH, toMin, freq, lat, long);
-  res.status(200).send({weatherBack});
-  console.log(weatherBack);
-})
+const main = async () => {
+  const getWeather = await getWeatherData('59.92160104865082', '10.744014548914478');
+  const weatherToObjArr = await turnJsonToObjectArray(getWeather);
+ // console.log(Object.values(weatherToObjArr[1].parameters[0]));
+  console.log(weatherToObjArr[1])
+ // console.log(Object.values(weatherToObjArr[1].parameters[1]));
+}
 
+main();
 
 
 
@@ -83,6 +84,4 @@ app.post('/weather', async (req, res) => {
 // Listening to server
 app.listen(PORT, () => {
     console.log(`The application is now listening to ${PORT}`)
-})
-
-
+});
