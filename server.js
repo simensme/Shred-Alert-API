@@ -65,8 +65,7 @@ app.post('/createuser', async (req, res) => {
 
 // Get weather data test
 
-
-const main = async () => {
+const compareMonitorToAPI = async () => {
   const getWeather = await getWeatherData('59.92160104865082', '10.744014548914478');
   const weatherToObjArr = await turnJsonToObjectArray(getWeather);
   // console.log(Object.values(weatherToObjArr[1].parameters[0]));
@@ -92,7 +91,7 @@ const main = async () => {
 
     if (Number(Object.values(weatherToObjArr[i].parameters[1])) > MINIMUMPRECIPITATION && Number(Object.values(weatherToObjArr[i].parameters[1])) < MAXIMUMPRECIPITATION) {
       desiredPrecipitation = true;
-    }
+    } return;
   };
 
   // For WIND SPEED
@@ -101,13 +100,13 @@ const main = async () => {
 
     if (Number(Object.values(weatherToObjArr[i].parameters[2])) > MINIMUMWINDSPEED && Number(Object.values(weatherToObjArr[i].parameters[2])) < MAXIMUMWINDSPEED) {
       desiredWind = true;
-    }
+    } return;
   };
 
   */
 };
 
-main();
+compareMonitorToAPI();
 
 
 
