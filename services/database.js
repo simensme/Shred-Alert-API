@@ -127,7 +127,7 @@ module.exports = {
     createMonitor,
     deleteMonitor,
     getMonitors,
-    getMonitorsByUserId,,
+    getMonitorsByUserId,
     createAlerts, 
     updatePassword,
 }
