@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, createAlerts, updatePassword } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, getMonitorsByUserId, updatePassword } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -14,61 +14,61 @@ const APP_SECRET = 'søtt-griseri';
 
 
 app.post('/login', async (req, res) => {
-	const {email, password} = req.body;
+  const { email, password } = req.body;
 
-	try {
-		const user = await getUserByEmail(email);
+  try {
 
-		if (!user) {
-			res.status(401).send({error: 'Unknown user - not found'});
-			return;
-		}
+    const user = await getUserByEmail(email);
 
-		if (password !== user.password) {
-			res.status(401).send({error: 'Wrong password!'});
-			return;
-		}
+    if (!user) {
+      res.status(401).send({ error: 'Unknown user - not found' });
+      return;
+    }
 
-		const token = jwt.sign(
-			{
-				id: user.id,
-				email: user.email,
-			},
-			Buffer.from(APP_SECRET, 'base64')
-		);
+    if (password !== user.password) {
+      res.status(401).send({ error: 'Wrong password!' });
+      return;
+    }
 
-		res.json({token});
-	} catch (error) {
-		res.status(500).send({error: error.message});
-	}
+    const token = jwt.sign({
+      id: user.id,
+      email: user.email
+    }, Buffer.from(APP_SECRET, 'base64'));
+
+    res.json({ token });
+
+  } catch (error) {
+    res.status(500).send({ error: error.message })
+  }
 });
+
 
 app.get('/session', async (req, res) => {
-  const token = req.headers['token'];
+  const token = req.headers['x-token'];
 
-	try {
-		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-		res.json({message: `You are logged in as ${payload.name}`});
-	} catch (error) {
-		res.status(401).send({error: 'Invalid token'});
-	}
+  try {
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    res.json({ message: `You are logged in as ${payload.name}` });
+  } catch (error) {
+    res.status(401).send({ error: 'Invalid token' });
+  }
 });
 
-
-//create new user
 app.post('/createuser', async (req, res) => {
-	const {name, email, password} = req.body;
-	const newUser = await createUser(name, email, password);
+  const { name, email, password } = req.body;
+  const newUser = await createUser(name, email, password);
 
-	res.status(200).send({newUser});
+  res.status(200).send({ newUser });
 });
+
+
 
 // Get weather data test
 
 const compareMonitorToAPI = async () => {
 
   // Get monitors for the monitor DB
-  const waitedMonitors = await getMonitors(3);
+  const waitedMonitors = await getMonitors(6);
   const minTemp = waitedMonitors.temp_min;
   const maxTemp = waitedMonitors.temp_max;
   const minWind = waitedMonitors.wind_min;
@@ -89,33 +89,49 @@ const compareMonitorToAPI = async () => {
   const weatherToObjArr = await turnJsonToObjectArray(getWeather);
   //console.log(Object.values(weatherToObjArr[1].parameters[0]));
 
-	let acceptableDays = [];
-
+  let dateArray = [];
+  let tempArray = [];
+  let allArrays = [];
+  let prevDate;
+  
   for (let i = 0; i < weatherToObjArr.length; i++) {
- //   console.log((weatherToObjArr[i].date).slice(0,10));
-   // console.log(`Temperature: ${Number(Object.values(weatherToObjArr[i].parameters[0]))}, Precipitation: ${Number(Object.values(weatherToObjArr[i].parameters[1]))}, Windspeed: ${Number(Object.values(weatherToObjArr[i].parameters[2]))}`);
-      
     if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp 
     && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp 
     && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip 
     && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip 
     && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind 
     && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind) {
-      //WE HAVE OUR DESIRED TEMPERATURE
-      acceptableDays.push(weatherToObjArr[i].date.slice(0,10));
-      console.log('Appropriate day pushed to array')
-   // console.log(weatherToObjArr[i].date.slice(0,10))
-
-    } else {
-      console.log('Not an appropriate day')
+      if (!prevDate) {
+        prevDate = new Date(weatherToObjArr[i].date.slice(0, 10));
+      } else {
+        const currDate = new Date(weatherToObjArr[i].date.slice(0, 10));
+        const difference = (currDate - prevDate) / (1000 * 60 * 60 * 24);
+        if (difference > 1) {
+          allArrays.push({dateArray, tempArray});
+          dateArray = [];
+          tempArray = [];
+        }
+        prevDate = currDate;
+      }
+      dateArray.push(weatherToObjArr[i].date.slice(0, 10));
+      tempArray.push(weatherToObjArr[i].parameters[0]);
     }
-  };
+  }
+  allArrays.push({dateArray, tempArray});
 
-  console.log(acceptableDays);
+  console.log(allArrays);
+  // Current Date
+  console.log(allArrays[0].dateArray[1]);
+  // Get the temperature of that particular date
+  console.log(Object.values(allArrays[0].tempArray[1]).toString());
 
 };
 
-compareMonitorToAPI();
+//compareMonitorToAPI();
+
+
+
+
 
 
 
@@ -135,22 +151,6 @@ app.post('/createmonitor', async (req, res) => {
 	}
 });
 
-//Update password in existing user
-app.post('/updatepassword', async (req, res) => {
-	const token = req.headers.token;
-	const params = req.body;
-
-	try {
-		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-		const userId = payload.id;
-		updatePassword(params, userId);
-	} catch (error) {
-		res.status(500).send({error: error});
-		console.log(error);
-	}
-});
-
-
 //CreateNewAlert in database
 app.post('/createAlert', async (req, res) => {
 	const params = req.body;
@@ -164,20 +164,22 @@ app.post('/createAlert', async (req, res) => {
 });
 
 
-//delete Monitor in database
-app.delete('/monitors', async (req, res) => {
-	const monitorToDelete = 3;
-	try {
-		await deleteMonitor(monitorToDelete);
-	} catch (error) {
-		res.status(401).send({
-			error: 'Unable to verify token - not able to delete shred',
-		});
-	}
-	res.status(200).end();
+
+
+app.get('/monitors', async (req, res)=>{
+  const token = req.headers.token;
+  const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+  const userId = payload.id;
+
+
+  const userMonitors = await getMonitorsByUserId(userId);
+  console.log(userMonitors, 'test');
+
+  res.send(userMonitors);
+
 });
 
 // Listening to server
 app.listen(PORT, () => {
-	console.log(`The application is now listening to ${PORT}`);
+  console.log(`The application is now listening to ${PORT}`)
 });
