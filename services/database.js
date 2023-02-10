@@ -51,9 +51,20 @@ async function createMonitor(params, userId){
     ]);
 }
 
+async function deleteMonitor(id){
+
+   await database.query(
+        `
+        DELETE FROM MONITOR 
+        WHERE id = $1
+        `, [id]
+    )
+}
+
 module.exports = {
     getUserByEmail,
     createUser,
     createMonitor,
+    deleteMonitor,
 }
 
