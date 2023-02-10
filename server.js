@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -66,35 +66,59 @@ app.post('/createuser', async (req, res) => {
 // Get weather data test
 
 const compareMonitorToAPI = async () => {
-  const getWeather = await getWeatherData('59.92160104865082', '10.744014548914478');
+
+  // Get monitors for the monitor DB
+  const waitedMonitors = await getMonitors();
+  const minTemp = waitedMonitors.temp_min;
+  const maxTemp = waitedMonitors.temp_max;
+  const minWind = waitedMonitors.wind_min;
+  const maxWind = waitedMonitors.wind_max;
+  const minPrecip = Number(waitedMonitors.precip_min);
+  const maxPrecip = Number(waitedMonitors.precip_max);
+  // Clouds not used yet
+  const minCloud = waitedMonitors.cloudcover_min;
+  const maxCloud = waitedMonitors.cloudcover_max;
+
+  // Latitude and Longitude from monitor DB
+  const userLat = waitedMonitors.lat;
+  const userLng = waitedMonitors.lng;
+
+
+// From Weather API
+  const getWeather = await getWeatherData(userLat, userLng);
   const weatherToObjArr = await turnJsonToObjectArray(getWeather);
-  // console.log(Object.values(weatherToObjArr[1].parameters[0]));
+  //console.log(Object.values(weatherToObjArr[1].parameters[0]));
 
   let acceptableDays = [];
 
   for (let i = 0; i < weatherToObjArr.length; i++) {
-    console.log((weatherToObjArr[i].date).slice(0,10));
-    console.log(`Temperature: ${Number(Object.values(weatherToObjArr[i].parameters[0]))}, Precipitation: ${Number(Object.values(weatherToObjArr[i].parameters[1]))}, Windspeed: ${Number(Object.values(weatherToObjArr[i].parameters[2]))}`);
+ //   console.log((weatherToObjArr[i].date).slice(0,10));
+   // console.log(`Temperature: ${Number(Object.values(weatherToObjArr[i].parameters[0]))}, Precipitation: ${Number(Object.values(weatherToObjArr[i].parameters[1]))}, Windspeed: ${Number(Object.values(weatherToObjArr[i].parameters[2]))}`);
     
-    /*
-    if (Number(Object.values(weatherToObjArr[i].parameters[0])) > MINIMUMTEMPERATURE 
-    && Number(Object.values(weatherToObjArr[i].parameters[0])) < MAXIMUMTEMPERATURE 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) > MINIMUMPRECIPITATION 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) < MAXIMUMPRECIPITATION 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) > MINIMUMWINDSPEED 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) < MAXIMUMWINDSPEED) {
+    
+    if (Number(Object.values(weatherToObjArr[i].parameters[0])) > minTemp 
+    && Number(Object.values(weatherToObjArr[i].parameters[0])) < maxTemp 
+    && Number(Object.values(weatherToObjArr[i].parameters[1])) > minPrecip 
+    && Number(Object.values(weatherToObjArr[i].parameters[1])) < maxPrecip 
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) > minWind 
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) < maxWind) {
       //WE HAVE OUR DESIRED TEMPERATURE
       acceptableDays.push(weatherToObjArr[i].date.slice(0,10));
       return acceptableDays;
-    } return;
-    */
-
+    } console.log('None of the days are appropriate')
   };
 
-  
+  console.log(acceptableDays);
+
 };
 
 compareMonitorToAPI();
+
+
+
+
+
+
 
 /* 
 POST FUNKSJON: for å opprette nye monitorer */

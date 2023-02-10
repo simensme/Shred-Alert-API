@@ -49,11 +49,31 @@ async function createMonitor(params, userId){
       params.lat,
       params.lon      
     ]);
+};
+
+
+// Database Query which will be used to compare with 2-week forecast.
+
+async function getMonitors(){
+  const monitor = await database.query(`
+   SELECT 
+     * 
+   FROM 
+     monitor
+
+   `);
+   
+   return monitor.rows[0];
 }
+
+
+
+
 
 module.exports = {
     getUserByEmail,
     createUser,
     createMonitor,
+    getMonitors
 }
 
