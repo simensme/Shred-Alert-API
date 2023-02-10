@@ -89,29 +89,41 @@ const compareMonitorToAPI = async () => {
   const weatherToObjArr = await turnJsonToObjectArray(getWeather);
   //console.log(Object.values(weatherToObjArr[1].parameters[0]));
 
-  let acceptableDays = [];
-
+  let dateArray = [];
+  let tempArray = [];
+  let allArrays = [];
+  let prevDate;
+  
   for (let i = 0; i < weatherToObjArr.length; i++) {
- //   console.log((weatherToObjArr[i].date).slice(0,10));
-   // console.log(`Temperature: ${Number(Object.values(weatherToObjArr[i].parameters[0]))}, Precipitation: ${Number(Object.values(weatherToObjArr[i].parameters[1]))}, Windspeed: ${Number(Object.values(weatherToObjArr[i].parameters[2]))}`);
-      
     if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp 
     && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp 
     && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip 
     && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip 
     && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind 
     && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind) {
-      //WE HAVE OUR DESIRED TEMPERATURE
-      acceptableDays.push(weatherToObjArr[i].date.slice(0,10));
-      console.log('Appropriate day pushed to array')
-   // console.log(weatherToObjArr[i].date.slice(0,10))
-
-    } else {
-      console.log('Not an appropriate day')
+      if (!prevDate) {
+        prevDate = new Date(weatherToObjArr[i].date.slice(0, 10));
+      } else {
+        const currDate = new Date(weatherToObjArr[i].date.slice(0, 10));
+        const difference = (currDate - prevDate) / (1000 * 60 * 60 * 24);
+        if (difference > 1) {
+          allArrays.push({dateArray, tempArray});
+          dateArray = [];
+          tempArray = [];
+        }
+        prevDate = currDate;
+      }
+      dateArray.push(weatherToObjArr[i].date.slice(0, 10));
+      tempArray.push(weatherToObjArr[i].parameters[0]);
     }
-  };
+  }
+  allArrays.push({dateArray, tempArray});
 
-  console.log(acceptableDays);
+  console.log(allArrays);
+  // Current Date
+  console.log(allArrays[0].dateArray[1]);
+  // Get the temperature of that particular date
+  console.log(Object.values(allArrays[0].tempArray[1]).toString());
 
 };
 
