@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -137,7 +137,7 @@ app.post('/createmonitor', async (req, res) => {
 });
 
 app.delete('/monitors', async (req, res) => {
-	const monitorToDelete = 5;
+	const monitorToDelete = 3;
 	try {
 		await deleteMonitor(monitorToDelete);
 	} catch (error) {

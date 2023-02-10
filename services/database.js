@@ -67,7 +67,14 @@ async function getMonitors(monitorID){
    
    return monitor.rows[0];
 }
-
+async function deleteMonitor(id){
+  database.query(`
+  DELETE FROM
+    monitor
+  WHERE
+    id = $1;
+  `,[id]);
+}
 
 
 
