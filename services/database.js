@@ -6,6 +6,17 @@ const database = new Pool({
     connectionString: POSTGRES_URL
 })
 
+async function updatePassword(newPassword, userId){
+ const user = await database.query(`
+ UPDATE
+  users
+  SET password = $1
+  FROM 
+  users
+  WHERE 
+   id = $2
+ `, [newPassword, userId])
+}z
 
 async function getUserByEmail(email){
    const user = await database.query(`
@@ -104,6 +115,7 @@ module.exports = {
     createMonitor,
     deleteMonitor,
     getMonitors,
-    createAlerts
+    createAlerts, 
+    updatePassword,
 }
 

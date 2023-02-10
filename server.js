@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, createAlerts } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, createAlerts, updatePassword } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -134,6 +134,22 @@ app.post('/createmonitor', async (req, res) => {
 		console.log(error);
 	}
 });
+
+//Update password in existing user
+app.post('/updatepassword', async (req, res) => {
+	const token = req.headers.token;
+	const params = req.body;
+
+	try {
+		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+		const userId = payload.id;
+		updatePassword(params, userId);
+	} catch (error) {
+		res.status(500).send({error: error});
+		console.log(error);
+	}
+});
+
 
 //CreateNewAlert in database
 app.post('/createAlert', async (req, res) => {
