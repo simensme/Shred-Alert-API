@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, getMonitorsByUserId } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -112,7 +112,7 @@ const compareMonitorToAPI = async () => {
 
 };
 
-compareMonitorToAPI();
+//compareMonitorToAPI();
 
 
 
@@ -146,6 +146,19 @@ app.delete('/monitors', async (req, res) => {
 		});
 	}
 	res.status(200).end();
+});
+
+app.get('/monitors', async (req, res)=>{
+  const token = req.headers.token;
+  const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+  const userId = payload.id;
+
+
+  const userMonitors = await getMonitorsByUserId(userId);
+  console.log(userMonitors, 'test');
+
+  res.send(userMonitors);
+
 });
 
 // Listening to server

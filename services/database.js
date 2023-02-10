@@ -76,6 +76,18 @@ async function deleteMonitor(id){
   `,[id]);
 }
 
+async function getMonitorsByUserId(id){
+  const monitors = await database.query(`
+  SELECT 
+    *
+  FROM
+    monitor
+  WHERE
+  user_id = $1;
+  `, [id]);
+  
+  return monitors.rows;
+}
 
 
 
@@ -84,6 +96,7 @@ module.exports = {
     createUser,
     createMonitor,
     deleteMonitor,
-    getMonitors
+    getMonitors,
+    getMonitorsByUserId,
 }
 
