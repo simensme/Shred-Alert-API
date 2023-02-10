@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, createAlerts } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -11,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 const APP_SECRET = 'søtt-griseri';
+
 
 app.post('/login', async (req, res) => {
 	const {email, password} = req.body;
@@ -53,6 +54,8 @@ app.get('/session', async (req, res) => {
 	}
 });
 
+
+//create new user
 app.post('/createuser', async (req, res) => {
 	const {name, email, password} = req.body;
 	const newUser = await createUser(name, email, password);
@@ -116,10 +119,6 @@ compareMonitorToAPI();
 
 
 
-
-
-
-
 /* 
 POST FUNKSJON: for å opprette nye monitorer */
 app.post('/createmonitor', async (req, res) => {
@@ -136,6 +135,20 @@ app.post('/createmonitor', async (req, res) => {
 	}
 });
 
+//CreateNewAlert in database
+app.post('/createAlert', async (req, res) => {
+	const params = req.body;
+	try{
+		const newAlert = await createAlerts(params, userId);
+		res.status(200).send({newAlert});
+	} catch (error){
+		res.status(500).send({error: error});
+		console.log(error);
+	}
+});
+
+
+//delete Monitor in database
 app.delete('/monitors', async (req, res) => {
 	const monitorToDelete = 3;
 	try {
