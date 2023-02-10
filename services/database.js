@@ -52,6 +52,25 @@ async function createMonitor(params, userId){
 };
 
 
+
+async function createAlerts(params, userId){
+  return new Promise((resolve, reject) => {
+    database.query(`
+    INSERT INTO
+      alerts
+    VALUES
+    (Default, $1, $2, $3, $4)
+    `, 
+    [userId, params.monitor_id,params.date_from,params.date_to,params.changed], 
+    (error, result) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
+      });
+  });
+};
+
 // Database Query which will be used to compare with 2-week forecast.
 
 async function getMonitors(monitorID){
@@ -67,7 +86,14 @@ async function getMonitors(monitorID){
    
    return monitor.rows[0];
 }
-
+async function deleteMonitor(id){
+  database.query(`
+  DELETE FROM
+    monitor
+  WHERE
+    id = $1;
+  `,[id]);
+}
 
 
 
@@ -76,6 +102,8 @@ module.exports = {
     getUserByEmail,
     createUser,
     createMonitor,
-    getMonitors
+    deleteMonitor,
+    getMonitors,
+    createAlerts
 }
 
