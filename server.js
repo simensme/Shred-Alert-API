@@ -68,7 +68,7 @@ app.post('/createuser', async (req, res) => {
 const compareMonitorToAPI = async () => {
 
   // Get monitors for the monitor DB
-  const waitedMonitors = await getMonitors(3);
+  const waitedMonitors = await getMonitors(6);
   const minTemp = waitedMonitors.temp_min;
   const maxTemp = waitedMonitors.temp_max;
   const minWind = waitedMonitors.wind_min;
