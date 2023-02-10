@@ -54,14 +54,16 @@ async function createMonitor(params, userId){
 
 // Database Query which will be used to compare with 2-week forecast.
 
-async function getMonitors(){
+async function getMonitors(monitorID){
   const monitor = await database.query(`
    SELECT 
      * 
    FROM 
      monitor
+  WHERE
+    id = $1
 
-   `);
+   `, [monitorID]);
    
    return monitor.rows[0];
 }

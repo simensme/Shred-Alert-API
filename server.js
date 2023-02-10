@@ -68,7 +68,7 @@ app.post('/createuser', async (req, res) => {
 const compareMonitorToAPI = async () => {
 
   // Get monitors for the monitor DB
-  const waitedMonitors = await getMonitors();
+  const waitedMonitors = await getMonitors(3);
   const minTemp = waitedMonitors.temp_min;
   const maxTemp = waitedMonitors.temp_max;
   const minWind = waitedMonitors.wind_min;
@@ -94,18 +94,21 @@ const compareMonitorToAPI = async () => {
   for (let i = 0; i < weatherToObjArr.length; i++) {
  //   console.log((weatherToObjArr[i].date).slice(0,10));
    // console.log(`Temperature: ${Number(Object.values(weatherToObjArr[i].parameters[0]))}, Precipitation: ${Number(Object.values(weatherToObjArr[i].parameters[1]))}, Windspeed: ${Number(Object.values(weatherToObjArr[i].parameters[2]))}`);
-    
-    
-    if (Number(Object.values(weatherToObjArr[i].parameters[0])) > minTemp 
-    && Number(Object.values(weatherToObjArr[i].parameters[0])) < maxTemp 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) > minPrecip 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) < maxPrecip 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) > minWind 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) < maxWind) {
+      
+    if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp 
+    && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp 
+    && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip 
+    && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip 
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind 
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind) {
       //WE HAVE OUR DESIRED TEMPERATURE
       acceptableDays.push(weatherToObjArr[i].date.slice(0,10));
-      return acceptableDays;
-    } console.log('None of the days are appropriate')
+      console.log('Appropriate day pushed to array')
+   // console.log(weatherToObjArr[i].date.slice(0,10))
+
+    } else {
+      console.log('Not an appropriate day')
+    }
   };
 
   console.log(acceptableDays);
