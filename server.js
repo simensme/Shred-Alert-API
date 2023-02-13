@@ -84,7 +84,7 @@ const compareMonitorToAPI = async () => {
   const userLng = waitedMonitors.lng;
 
 
-// From Weather API
+  // From Weather API
   const getWeather = await getWeatherData(userLat, userLng);
   const weatherToObjArr = await turnJsonToObjectArray(getWeather);
   //console.log(Object.values(weatherToObjArr[1].parameters[0]));
@@ -97,7 +97,7 @@ const compareMonitorToAPI = async () => {
 
   let allArrays = [];
   let prevDate;
-  
+
   for (let i = 0; i < weatherToObjArr.length; i++) {
     if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp 
     && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp 
@@ -134,7 +134,7 @@ const compareMonitorToAPI = async () => {
 
   // For the comparison
   console.log(allArrays)
- 
+
   /*
   console.log(allArrays[0].tempArray);
  console.log(allArrays[1].tempArray);
@@ -159,29 +159,29 @@ compareMonitorToAPI();
 /* 
 POST FUNKSJON: for å opprette nye monitorer */
 app.post('/createmonitor', async (req, res) => {
-	const token = req.headers.token;
-	const params = req.body;
+  const token = req.headers.token;
+  const params = req.body;
 
-	try {
-		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-		const userId = payload.id;
-		createMonitor(params, userId);
-	} catch (error) {
-		res.status(500).send({error: error});
-		console.log(error);
-	}
+  try {
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    const userId = payload.id;
+    createMonitor(params, userId);
+  } catch (error) {
+    res.status(500).send({ error: error });
+    console.log(error);
+  }
 });
 
 //CreateNewAlert in database
 app.post('/createAlert', async (req, res) => {
-	const params = req.body;
-	try{
-		const newAlert = await createAlerts(params, userId);
-		res.status(200).send({newAlert});
-	} catch (error){
-		res.status(500).send({error: error});
-		console.log(error);
-	}
+  const params = req.body;
+  try {
+    const newAlert = await createAlerts(params, userId);
+    res.status(200).send({ newAlert });
+  } catch (error) {
+    res.status(500).send({ error: error });
+    console.log(error);
+  }
 });
 
 //Hente alerts basert på bruker-id
@@ -196,17 +196,17 @@ app.get('/', async (req, res) => {
 });
 
 
-app.delete('/monitors', async(req, res) =>{
-  
+app.delete('/monitors', async (req, res) => {
+
   //Hente monitor Id fra den enkelte monitor
   //hentes gjennom state til headers eller body
   //kjøre delete fuksjon med monitorID
   //deleteMonitor(monitorId)
-  
+
 });
 
 
-app.get('/monitors', async (req, res)=>{
+app.get('/monitors', async (req, res) => {
   const token = req.headers.token;
   const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
   const userId = payload.id;
@@ -217,6 +217,21 @@ app.get('/monitors', async (req, res)=>{
   res.send(userMonitors);
 
 });
+
+app.post('updatepassword', async (req, res) => {
+  const { token } = req.headers;
+  const { newPassword } = req.body;
+  try {
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    const userId = payload.id;
+    console.log(userId)
+    await updatePassword(newPassword, userId)
+  } catch (error) {
+    res.status(500).send({ error: error });
+    console.log(error);
+
+  }
+})
 
 // Listening to server
 app.listen(PORT, () => {
