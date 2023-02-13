@@ -7,20 +7,19 @@ const database = new Pool({
 	connectionString: POSTGRES_URL,
 });
 
-async function updatePassword(newPassword, userId) {
-	const user = await database.query(
-		`
- UPDATE
-  users
-  SET password = $1
-  FROM 
-  users
-  WHERE 
-   id = $2
- `,
-		[newPassword, userId]
-	);
-}
+//getUserByEmail - login
+//createUser - singup
+//updatePassword - settings
+
+//createAlerts - alert
+//getAlertsByUserId - alert
+//deleteAlert - alert
+
+//createMonitor - monitor 
+//getMonitors - monitor 
+//getMonitorsByUserId - monitor
+//deleteMonitor - monitor 
+
 
 async function getUserByEmail(email) {
 	const user = await database.query(
@@ -51,28 +50,18 @@ async function createUser(name, email, password) {
 	);
 }
 
-async function createMonitor(params, userId) {
-	database.query(
+async function updatePassword(newPassword, userId) {
+	const user = await database.query(
 		`
-  INSERT INTO
-    monitor
-  VALUES
-  (Default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-  `,
-		[
-			userId,
-			params.shredName,
-			params.minTemp,
-			params.maxTemp,
-			params.minWind,
-			params.maxWind,
-			params.minDownPour,
-			params.maxDownPour,
-			params.minClouds,
-			params.maxClouds,
-			params.lat,
-			params.lon,
-		]
+ UPDATE
+  users
+  SET password = $1
+  FROM 
+  users
+  WHERE 
+   id = $2
+ `,
+		[newPassword, userId]
 	);
 }
 
@@ -102,8 +91,60 @@ async function createAlerts(params, userId) {
 	});
 }
 
-// Database Query which will be used to compare with 2-week forecast.
+async function deleteAlert(id) {
+	database.query(
+		`
+  DELETE FROM
+    alerts
+  WHERE
+    id = $1;
+  `,
+		[id]
+	);
+}
 
+async function getAlertsByUserId(userId) {
+	const alerts = await database.query(
+		`
+  SELECT
+    *
+  FROM
+    alerts
+  WHERE
+   user_id = $1;
+  `,
+		[userId]
+	);
+
+	return alerts.rows;
+}
+
+async function createMonitor(params, userId) {
+	database.query(
+		`
+  INSERT INTO
+    monitor
+  VALUES
+  (Default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+  `,
+		[
+			userId,
+			params.shredName,
+			params.minTemp,
+			params.maxTemp,
+			params.minWind,
+			params.maxWind,
+			params.minDownPour,
+			params.maxDownPour,
+			params.minClouds,
+			params.maxClouds,
+			params.lat,
+			params.lon,
+		]
+	);
+}
+
+// Database Query which will be used to compare with 2-week forecast.
 async function getMonitors(monitorID) {
 	const monitor = await database.query(
 		`
@@ -119,29 +160,6 @@ async function getMonitors(monitorID) {
 	);
 
 	return monitor.rows[0];
-}
-async function deleteMonitor(id) {
-	database.query(
-		`
-  DELETE FROM
-    monitor
-  WHERE
-    id = $1;
-  `,
-		[id]
-	);
-}
-
-async function deleteAlert(id) {
-	database.query(
-		`
-  DELETE FROM
-    alerts
-  WHERE
-    id = $1;
-  `,
-		[id]
-	);
 }
 
 async function getMonitorsByUserId(id) {
@@ -160,20 +178,16 @@ async function getMonitorsByUserId(id) {
 	return monitors.rows;
 }
 
-async function getAlertsByUserId(userId) {
-	const alerts = await database.query(
+async function deleteMonitor(id) {
+	database.query(
 		`
-  SELECT
-    *
-  FROM
-    alerts
+  DELETE FROM
+    monitor
   WHERE
-   user_id = $1;
+    id = $1;
   `,
-		[userId]
+		[id]
 	);
-
-	return alerts.rows;
 }
 
 module.exports = {
