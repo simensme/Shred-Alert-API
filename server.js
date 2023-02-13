@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, getMonitorsByUserId } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, getMonitorsByUserId, updatePassword } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -68,7 +68,7 @@ app.post('/createuser', async (req, res) => {
 const compareMonitorToAPI = async () => {
 
   // Get monitors for the monitor DB
-  const waitedMonitors = await getMonitors(3);
+  const waitedMonitors = await getMonitors(6);
   const minTemp = waitedMonitors.temp_min;
   const maxTemp = waitedMonitors.temp_max;
   const minWind = waitedMonitors.wind_min;
@@ -137,18 +137,30 @@ const compareMonitorToAPI = async () => {
 
 /* 
 POST FUNKSJON: for å opprette nye monitorer */
-app.post('/createmonitor', async (req, res) =>{
-  const token = req.headers.token;
-  const params = req.body;
- 
-  try{   
-    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-    const userId = payload.id;
-    createMonitor(params, userId);
- }catch(error){
-   res.status(500).send({error: error});
-   console.log(error);
-}
+app.post('/createmonitor', async (req, res) => {
+	const token = req.headers.token;
+	const params = req.body;
+
+	try {
+		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+		const userId = payload.id;
+		createMonitor(params, userId);
+	} catch (error) {
+		res.status(500).send({error: error});
+		console.log(error);
+	}
+});
+
+//CreateNewAlert in database
+app.post('/createAlert', async (req, res) => {
+	const params = req.body;
+	try{
+		const newAlert = await createAlerts(params, userId);
+		res.status(200).send({newAlert});
+	} catch (error){
+		res.status(500).send({error: error});
+		console.log(error);
+	}
 });
 
 
