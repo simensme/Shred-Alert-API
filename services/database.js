@@ -65,30 +65,43 @@ async function updatePassword(newPassword, userId) {
 	);
 }
 
-async function createAlerts(params, userId) {
-	return new Promise((resolve, reject) => {
-		database.query(
-			`
-    INSERT INTO
-      alerts
-    VALUES
-    (Default, $1, $2, $3, $4)
-    `,
-			[
-				userId,
-				params.monitor_id,
-				params.date_from,
-				params.date_to,
-				params.changed,
-			],
-			(error, result) => {
-				if (error) {
-					reject(error);
-				}
-				resolve(result);
-			}
-		);
-	});
+async function createAlertsFromMonitorCheck(alertData, userId, monitorId) {
+  
+  alertData.forEach(alert => database.query(`
+  INSERT INTO
+    alerts
+  VALUES
+    (DEFAULT, $1, $2, $3, $4, $5)
+  `, [
+    userId,
+    monitorId,
+    alertData.dateArray[0],
+    alertData.dateArray[dateArray.length -1],
+    false
+  ]));
+  // return new Promise((resolve, reject) => {
+	// 	database.query(
+	// 		`
+  //   INSERT INTO
+  //     alerts
+  //   VALUES
+  //   (Default, $1, $2, $3, $4)
+  //   `,
+	// 		[
+	// 			userId,
+	// 			params.monitor_id,
+	// 			params.date_from,
+	// 			params.date_to,
+	// 			params.changed,
+	// 		],
+	// 		(error, result) => {
+	// 			if (error) {
+	// 				reject(error);
+	// 			}
+	// 			resolve(result);
+	// 		}
+	// 	);
+	// });
 }
 
 async function deleteAlert(id) {
@@ -197,7 +210,7 @@ module.exports = {
 	deleteMonitor,
 	getMonitors,
 	getMonitorsByUserId,
-	createAlerts,
+	createAlertsFromMonitorCheck,
 	updatePassword,
 	getAlertsByUserId,
 	deleteAlert,

@@ -5,16 +5,14 @@ const {
 	getUserByEmail,
 	createUser,
 	updatePassword,
-	createAlerts,
+	createAlertsFromMonitorCheck,
 	getAlertsByUserId,
 	deleteAlert,
 	createMonitor,
-	getMonitors,
 	getMonitorsByUserId,
 	deleteMonitor,
 } = require('./services/database');
-const {getWeatherData} = require('./services/getWeatherData');
-const {turnJsonToObjectArray} = require('./services/functions');
+const {compareMonitorToAPI} = require('./services/WeatherCheck');
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -99,93 +97,6 @@ app.post('updatepassword', async (req, res) => {
 });
 
 
-const compareMonitorToAPI = async () => {
-	// Get monitors for the monitor DB
-	const waitedMonitors = await getMonitors(5);
-	const minTemp = waitedMonitors.temp_min;
-	const maxTemp = waitedMonitors.temp_max;
-	const minWind = waitedMonitors.wind_min;
-	const maxWind = waitedMonitors.wind_max;
-	const minPrecip = Number(waitedMonitors.precip_min);
-	const maxPrecip = Number(waitedMonitors.precip_max);
-	// Clouds not used yet
-	const minCloud = waitedMonitors.cloudcover_min;
-	const maxCloud = waitedMonitors.cloudcover_max;
-
-	// Latitude and Longitude from monitor DB
-	const userLat = waitedMonitors.lat;
-	const userLng = waitedMonitors.lng;
-
-	// From Weather API
-	const getWeather = await getWeatherData(userLat, userLng);
-	const weatherToObjArr = await turnJsonToObjectArray(getWeather);
-	//console.log(Object.values(weatherToObjArr[1].parameters[0]));
-
-	let dateArray = [];
-	let tempArray = [];
-	let rainArray = [];
-	let windArray = [];
-	let cloudArray = [];
-
-	let allArrays = [];
-	let prevDate;
-
-	// Current Date
-	// console.log(allArrays[0].dateArray[0]);
-	// Get the temperature of that particular date
-	// console.log(Object.values(allArrays[0].tempArray[0]).toString());
-  for (let i = 0; i < weatherToObjArr.length; i++) {
-    if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp 
-    && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind
-    && Number(Object.values(weatherToObjArr[i].parameters[3])) >= minCloud
-    && Number(Object.values(weatherToObjArr[i].parameters[3])) <= maxCloud) {
-      if (!prevDate) {
-        prevDate = new Date(weatherToObjArr[i].date.slice(0, 10));
-      } else {
-        const currDate = new Date(weatherToObjArr[i].date.slice(0, 10));
-        const difference = (currDate - prevDate) / (1000 * 60 * 60 * 24);
-        if (difference > 1) {
-          allArrays.push({dateArray, tempArray, rainArray, windArray, cloudArray});
-          dateArray = [];
-          tempArray = [];
-          rainArray = [];
-          windArray = [];
-          cloudArray = [];
-        }
-        prevDate = currDate;
-      }
-
-      dateArray.push(weatherToObjArr[i].date.slice(0, 10));
-      tempArray.push(weatherToObjArr[i].parameters[0]);
-      rainArray.push(weatherToObjArr[i].parameters[1]);
-      windArray.push(weatherToObjArr[i].parameters[2]);
-      cloudArray.push(weatherToObjArr[i].parameters[3]);
-    }
-  }
-  allArrays.push({dateArray, tempArray, rainArray, windArray, cloudArray});
-
-  // For the comparison
-  console.log(allArrays)
-
- // console.log(allArrays[1].dateArray[0]);
-  
- // console.log(Object.values(allArrays[1].tempArray[0]).toString());
- // console.log(Object.values(allArrays[1].rainArray[0]).toString());
-  //console.log(Object.values(allArrays[1].windArray[0]).toString());
- // console.log(Object.values(allArrays[1].cloudArray[0]).toString());
-
-  return allArrays;
-};
-
-compareMonitorToAPI();
-
-
-
-
 //CreateNewAlert in database
 app.post('/createAlert', async (req, res) => {
 	const params = req.body;
@@ -247,6 +158,8 @@ app.delete('/monitors', async (req, res) => {
 	//kjøre delete fuksjon med monitorID
 	//deleteMonitor(monitorId)
 });
+
+compareMonitorToAPI();
 
 // Listening to server
 app.listen(PORT, () => {
