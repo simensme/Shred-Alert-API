@@ -11,6 +11,7 @@ const {
 	createMonitor,
 	getMonitorsByUserId,
 	deleteMonitor,
+	getAlerstbyId,
 } = require('./services/database');
 const {compareMonitorToAPI} = require('./services/WeatherCheck');
 
@@ -169,6 +170,15 @@ app.get('/monitors', async (req, res) => {
 
 	res.send(userMonitors);
 });
+
+app.get('/alerts', async(req, res)=>{
+	const { token } = req.headers;
+	const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+	const userId = payload.id;
+	const alertsByUser = await getAlertsbyId(userId);
+
+	res.send(alertsByUser);
+})
 
 
 app.delete('/monitors', async (req, res) => {
