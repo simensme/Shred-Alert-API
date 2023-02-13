@@ -179,6 +179,8 @@ app.delete('/monitors', async (req, res) => {
 });
 
 
+compareMonitorToAPI();
+
 // Listening to server
 app.listen(PORT, () => {
 	console.log(`The application is now listening to ${PORT}`);

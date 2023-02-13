@@ -140,7 +140,6 @@ async function getWeatherData(lat, long) {
     return alertData;
   };
   
-  compareMonitorToAPI();
 
 module.exports = {
     compareMonitorToAPI,
