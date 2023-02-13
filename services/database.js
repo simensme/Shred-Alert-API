@@ -95,43 +95,27 @@ async function updatePassword(newPassword, userId) {
 	);
 }
 
-async function createAlertsFromMonitorCheck(alertData, userId, monitorId) {
+async function createAlertsFromMonitorCheck(alertArray) {
   
-  alertData.forEach(alert => database.query(`
-  INSERT INTO
-    alerts
-  VALUES
-    (DEFAULT, $1, $2, $3, $4, $5)
-  `, [
-    userId,
-    monitorId,
-    alertData.dateArray[0],
-    alertData.dateArray[dateArray.length -1],
-    false
-  ]));
-  // return new Promise((resolve, reject) => {
-	// 	database.query(
-	// 		`
-  //   INSERT INTO
-  //     alerts
-  //   VALUES
-  //   (Default, $1, $2, $3, $4)
-  //   `,
-	// 		[
-	// 			userId,
-	// 			params.monitor_id,
-	// 			params.date_from,
-	// 			params.date_to,
-	// 			params.changed,
-	// 		],
-	// 		(error, result) => {
-	// 			if (error) {
-	// 				reject(error);
-	// 			}
-	// 			resolve(result);
-	// 		}
-	// 	);
-	// });
+  alertArray.forEach(alert => {
+    
+    if(alert.dateArray.length < 1){
+      return;
+    }else{
+
+      database.query(`
+        INSERT INTO
+          alerts
+        VALUES
+          (DEFAULT, $1, $2, $3, $4, $5)
+        `, [
+          alert.userId,
+          alert.monitorId,
+          alert.dateArray[0],
+          alert.dateArray[alert.dateArray.length -1],
+          false])
+      }
+    });
 }
 
 async function deleteAlert(id) {
@@ -188,7 +172,7 @@ async function createMonitor(params, userId) {
 }
 
 // Database Query which will be used to compare with 2-week forecast.
-async function getMonitors(monitorID) {
+async function getMonitor(monitorID) {
 	const monitor = await database.query(
 		`
    SELECT 
@@ -233,12 +217,24 @@ async function deleteMonitor(id) {
 	);
 }
 
+async function getAllMonitors(){
+  const monitorList = await database.query(`
+  SELECT
+    *
+  FROM
+    monitor;
+  `);
+
+  return monitorList.rows;
+}
+
 module.exports = {
 	getUserByEmail,
 	createUser,
 	createMonitor,
 	deleteMonitor,
-	getMonitors,
+	getMonitor,
+  getAllMonitors,
 	getMonitorsByUserId,
 	createAlertsFromMonitorCheck,
 	updatePassword,

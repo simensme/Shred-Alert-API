@@ -13,7 +13,7 @@ const {
 	deleteMonitor,
 	getAlerstbyId,
 } = require('./services/database');
-const {compareMonitorToAPI} = require('./services/WeatherCheck');
+const {compareMonitorToAPI, checkAllMonitors} = require('./services/WeatherCheck');
 
 
 const app = express();
@@ -33,7 +33,7 @@ const APP_SECRET = 'søtt-griseri';
 //deleteAlert - alert
 
 //createMonitor - monitor
-//getMonitors - monitor
+//getMonitor - monitor
 //getMonitorsByUserId - monitor
 //deleteMonitor - monitor
 
@@ -68,11 +68,11 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/session', async (req, res) => {
-	const token = req.headers['x-token'];
+	const token = req.headers.token;
 
 	try {
 		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-		res.json({message: `You are logged in as ${payload.name}`});
+		res.json({message: `You are logged in as ${payload.email}`});
 	} catch (error) {
 		res.status(401).send({error: 'Invalid token'});
 	}
@@ -188,6 +188,7 @@ app.delete('/monitors', async (req, res) => {
 	//deleteMonitor(monitorId)
 });
 
+checkAllMonitors();
 
 // Listening to server
 app.listen(PORT, () => {
