@@ -14,9 +14,6 @@ const {
 } = require('./services/database');
 const {compareMonitorToAPI} = require('./services/WeatherCheck');
 
-const { getUserByEmail, createUser, createMonitor, getMonitors, getMonitorsByUserId, updatePassword, getAlertsByUserId } = require('./services/database');
-const { getWeatherData } = require('./services/getWeatherData');
-const { turnJsonToObjectArray } = require('./services/functions');
 
 const app = express();
 const PORT = process.env.PORT || 3333;
@@ -181,7 +178,6 @@ app.delete('/monitors', async (req, res) => {
 	//deleteMonitor(monitorId)
 });
 
-compareMonitorToAPI();
 
 // Listening to server
 app.listen(PORT, () => {
