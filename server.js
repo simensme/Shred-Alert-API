@@ -152,6 +152,14 @@ app.post('/createmonitor', async (req, res) =>{
 });
 
 
+app.delete('/monitors', async(req, res) =>{
+  
+  //Hente monitor Id fra den enkelte monitor
+  //hentes gjennom state til headers eller body
+  //kjøre delete fuksjon med monitorID
+  //deleteMonitor(monitorId)
+  
+});
 
 
 app.get('/monitors', async (req, res)=>{
