@@ -80,8 +80,8 @@ async function getWeatherData(lat, long) {
     const weatherToObjArr = await turnJsonToObjectArray(getWeather);
     //console.log(Object.values(weatherToObjArr[1].parameters[0]));
     
-    let monitorId = monitor.id;
-    let userId = monitor.user_id;
+    const monitorId = monitor.id;
+    const userId = monitor.user_id;
 
     let dateArray = [];
     let tempArray = [];
