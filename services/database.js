@@ -29,6 +29,8 @@ async function updatePassword(oldPassword, newPassword, userId){
 //deleteMonitor - monitor 
 
 
+
+
 async function getUserByEmail(email) {
 	const user = await database.query(
 		`
@@ -47,7 +49,7 @@ async function getUserByEmail(email) {
 }
 
 async function createUser(name, email, password) {
-	database.query(
+	const alerts = database.query(
 		`
   INSERT INTO
     users(name, email, password)
@@ -55,6 +57,26 @@ async function createUser(name, email, password) {
   ($1, $2, $3);
   `,
 		[name, email, password]
+	);
+	return alerts.rows;
+}
+
+async function getAlertsbyId(userId){
+	database.query(
+		`
+		SELECT 
+			* 
+		FROM 
+			alerts
+		JOIN 
+			monitor 
+		
+		ON 
+			alerts.monitor_id = monitor.id
+		WHERE 
+			user_id = $1
+
+		`, [userId]
 	);
 }
 
@@ -218,4 +240,5 @@ module.exports = {
 	updatePassword,
 	getAlertsByUserId,
 	deleteAlert,
+	getAlertsbyId, 
 };
