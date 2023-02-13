@@ -28,7 +28,7 @@ async function getWeatherData(lat, long) {
     // Time interval: every 1 Hour:
     const howFrequent = `PT24H`;
     // Default parameters - WE MAY CHANGE THESE LATER.
-    const PARAMS = 't_2m:C,precip_1h:mm,wind_speed_002m:ms'; //total_cloud_cover:p
+    const PARAMS = 't_2m:C,precip_1h:mm,wind_speed_002m:ms,total_cloud_cover:p'; 
     // Latitude and Longitude - should have these form Gmaps.
     const latLong = `${lat},${long}`;
   

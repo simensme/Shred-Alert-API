@@ -68,7 +68,7 @@ app.post('/createuser', async (req, res) => {
 const compareMonitorToAPI = async () => {
 
   // Get monitors for the monitor DB
-  const waitedMonitors = await getMonitors(3);
+  const waitedMonitors = await getMonitors(4);
   const minTemp = waitedMonitors.temp_min;
   const maxTemp = waitedMonitors.temp_max;
   const minWind = waitedMonitors.wind_min;
@@ -91,6 +91,10 @@ const compareMonitorToAPI = async () => {
 
   let dateArray = [];
   let tempArray = [];
+  let rainArray = [];
+  let windArray = [];
+  let cloudArray = [];
+
   let allArrays = [];
   let prevDate;
   
@@ -100,25 +104,35 @@ const compareMonitorToAPI = async () => {
     && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip 
     && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip 
     && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind) {
+    && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind
+    && Number(Object.values(weatherToObjArr[i].parameters[3])) >= minCloud
+    && Number(Object.values(weatherToObjArr[i].parameters[3])) <= maxCloud) {
       if (!prevDate) {
         prevDate = new Date(weatherToObjArr[i].date.slice(0, 10));
       } else {
         const currDate = new Date(weatherToObjArr[i].date.slice(0, 10));
         const difference = (currDate - prevDate) / (1000 * 60 * 60 * 24);
         if (difference > 1) {
-          allArrays.push({dateArray, tempArray});
+          allArrays.push({dateArray, tempArray, rainArray, windArray, cloudArray});
           dateArray = [];
           tempArray = [];
+          rainArray = [];
+          windArray = [];
+          cloudArray = [];
         }
         prevDate = currDate;
       }
       dateArray.push(weatherToObjArr[i].date.slice(0, 10));
       tempArray.push(weatherToObjArr[i].parameters[0]);
+      rainArray.push(weatherToObjArr[i].parameters[1]);
+      windArray.push(weatherToObjArr[i].parameters[2]);
+      cloudArray.push(weatherToObjArr[i].parameters[3]);
     }
   }
-  allArrays.push({dateArray, tempArray});
+  allArrays.push({dateArray, tempArray, rainArray, windArray, cloudArray});
 
+
+  // For the comparison
   console.log(allArrays)
  
   /*
@@ -128,9 +142,9 @@ const compareMonitorToAPI = async () => {
 */
 
   // Current Date
- console.log(allArrays[0].dateArray[0]);
+// console.log(allArrays[0].dateArray[0]);
   // Get the temperature of that particular date
-  console.log(Object.values(allArrays[0].tempArray[0]).toString());
+ // console.log(Object.values(allArrays[0].tempArray[0]).toString());
 
 };
 
