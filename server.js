@@ -13,11 +13,11 @@ const {
 	deleteMonitor,
 } = require('./services/database');
 const {compareMonitorToAPI} = require('./services/WeatherCheck');
-=======
+
 const { getUserByEmail, createUser, createMonitor, getMonitors, getMonitorsByUserId, updatePassword, getAlertsByUserId } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
->>>>>>> Stashed changes
+
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -173,7 +173,7 @@ app.get('/monitors', async (req, res) => {
 	res.send(userMonitors);
 });
 
-<<<<<<< Updated upstream
+
 app.delete('/monitors', async (req, res) => {
 	//Hente monitor Id fra den enkelte monitor
 	//hentes gjennom state til headers eller body
