@@ -84,14 +84,14 @@ app.post('/createuser', async (req, res) => {
 	res.status(200).send({newUser});
 });
 
-app.post('updatepassword', async (req, res) => {
+app.post('/updatepassword', async (req, res) => {
 	const {token} = req.headers;
-	const {newPassword} = req.body;
+	const {oldPassword, newPassword} = req.body;
 	try {
 		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
 		const userId = payload.id;
 		console.log(userId);
-		await updatePassword(newPassword, userId);
+		await updatePassword(oldPassword, newPassword, userId);
 	} catch (error) {
 		res.status(500).send({error: error});
 		console.log(error);
