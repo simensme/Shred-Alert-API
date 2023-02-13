@@ -12,7 +12,7 @@ const {
 	getMonitorsByUserId,
 	deleteMonitor,
 } = require('./services/database');
-const {compareMonitorToAPI} = require('./services/WeatherCheck');
+const {compareMonitorToAPI, checkAllMonitors} = require('./services/WeatherCheck');
 
 
 const app = express();
@@ -32,7 +32,7 @@ const APP_SECRET = 'søtt-griseri';
 //deleteAlert - alert
 
 //createMonitor - monitor
-//getMonitors - monitor
+//getMonitor - monitor
 //getMonitorsByUserId - monitor
 //deleteMonitor - monitor
 
@@ -178,8 +178,7 @@ app.delete('/monitors', async (req, res) => {
 	//deleteMonitor(monitorId)
 });
 
-
-compareMonitorToAPI();
+checkAllMonitors();
 
 // Listening to server
 app.listen(PORT, () => {

@@ -1,4 +1,4 @@
-const { getMonitors } = require("./database");
+const { getMonitor, getAllMonitors } = require("./database");
 const { turnJsonToObjectArray } = require("./functions");
 
 // Parameterized variables for desired data.
@@ -57,10 +57,10 @@ async function getWeatherData(lat, long) {
     // Return value to compare
     return newData;
   }
+  const compareMonitorToAPI = async (monitor) => {
 
-  const compareMonitorToAPI = async () => {
     // Get monitors for the monitor DB
-    const waitedMonitors = await getMonitors(12);
+    const waitedMonitors = await getMonitor(monitor.id);
     const minTemp = waitedMonitors.temp_min;
     const maxTemp = waitedMonitors.temp_max;
     const minWind = waitedMonitors.wind_min;
@@ -79,7 +79,8 @@ async function getWeatherData(lat, long) {
     const getWeather = await getWeatherData(userLat, userLng);
     const weatherToObjArr = await turnJsonToObjectArray(getWeather);
     //console.log(Object.values(weatherToObjArr[1].parameters[0]));
-  
+    
+
     let dateArray = [];
     let tempArray = [];
     let rainArray = [];
@@ -128,7 +129,7 @@ async function getWeatherData(lat, long) {
     alertData.push({dateArray, tempArray, rainArray, windArray, cloudArray});
   
     // For the comparison
-    console.log(alertData)
+    //console.log(alertData)
   
    // console.log(alertData[1].dateArray[0]);
     
@@ -136,11 +137,17 @@ async function getWeatherData(lat, long) {
    // console.log(Object.values(alertData[1].rainArray[0]).toString());
     //console.log(Object.values(alertData[1].windArray[0]).toString());
    // console.log(Object.values(alertData[1].cloudArray[0]).toString());
-  
+    console.log(alertData);
     return alertData;
   };
+
+async function checkAllMonitors(){
+  const monitorList = await getAllMonitors();
   
+  monitorList.forEach(monitor => compareMonitorToAPI(monitor))
+}
 
 module.exports = {
     compareMonitorToAPI,
+    checkAllMonitors,
 };

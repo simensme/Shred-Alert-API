@@ -166,7 +166,7 @@ async function createMonitor(params, userId) {
 }
 
 // Database Query which will be used to compare with 2-week forecast.
-async function getMonitors(monitorID) {
+async function getMonitor(monitorID) {
 	const monitor = await database.query(
 		`
    SELECT 
@@ -211,12 +211,24 @@ async function deleteMonitor(id) {
 	);
 }
 
+async function getAllMonitors(){
+  const monitorList = await database.query(`
+  SELECT
+    *
+  FROM
+    monitor;
+  `);
+
+  return monitorList.rows;
+}
+
 module.exports = {
 	getUserByEmail,
 	createUser,
 	createMonitor,
 	deleteMonitor,
-	getMonitors,
+	getMonitor,
+  getAllMonitors,
 	getMonitorsByUserId,
 	createAlertsFromMonitorCheck,
 	updatePassword,
