@@ -68,7 +68,7 @@ app.post('/createuser', async (req, res) => {
 const compareMonitorToAPI = async () => {
 
   // Get monitors for the monitor DB
-  const waitedMonitors = await getMonitors(6);
+  const waitedMonitors = await getMonitors(3);
   const minTemp = waitedMonitors.temp_min;
   const maxTemp = waitedMonitors.temp_max;
   const minWind = waitedMonitors.wind_min;
@@ -119,15 +119,22 @@ const compareMonitorToAPI = async () => {
   }
   allArrays.push({dateArray, tempArray});
 
-  console.log(allArrays);
+  console.log(allArrays)
+ 
+  /*
+  console.log(allArrays[0].tempArray);
+ console.log(allArrays[1].tempArray);
+ console.log(allArrays[2].tempArray)
+*/
+
   // Current Date
-  console.log(allArrays[0].dateArray[1]);
+ console.log(allArrays[0].dateArray[0]);
   // Get the temperature of that particular date
-  console.log(Object.values(allArrays[0].tempArray[1]).toString());
+  console.log(Object.values(allArrays[0].tempArray[0]).toString());
 
 };
 
-//compareMonitorToAPI();
+compareMonitorToAPI();
 
 
 
