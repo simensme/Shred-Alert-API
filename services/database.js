@@ -16,7 +16,7 @@ async function updatePassword(newPassword, userId){
   WHERE 
    id = $2
  `, [newPassword, userId])
-}z
+}
 
 async function getUserByEmail(email){
    const user = await database.query(`

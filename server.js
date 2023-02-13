@@ -119,15 +119,15 @@ const compareMonitorToAPI = async () => {
   }
   allArrays.push({dateArray, tempArray});
 
-  console.log(allArrays);
+  //console.log(allArrays);
   // Current Date
-  console.log(allArrays[0].dateArray[1]);
+ // console.log(allArrays[0].dateArray[1]);
   // Get the temperature of that particular date
-  console.log(Object.values(allArrays[0].tempArray[1]).toString());
+ // console.log(Object.values(allArrays[0].tempArray[1]).toString());
 
 };
 
-//compareMonitorToAPI();
+compareMonitorToAPI();
 
 
 

@@ -34,8 +34,8 @@ function turnJsonToObjectArray(result) {
         }
     }, [])
     return everything;
-}
+};
 
 module.exports = {
     turnJsonToObjectArray
-}
+};
