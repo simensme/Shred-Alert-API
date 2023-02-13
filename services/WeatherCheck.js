@@ -1,4 +1,4 @@
-const { getMonitor, getAllMonitors } = require("./database");
+const { getMonitor, getAllMonitors, createAlertsFromMonitorCheck } = require("./database");
 const { turnJsonToObjectArray } = require("./functions");
 
 // Parameterized variables for desired data.
@@ -80,6 +80,8 @@ async function getWeatherData(lat, long) {
     const weatherToObjArr = await turnJsonToObjectArray(getWeather);
     //console.log(Object.values(weatherToObjArr[1].parameters[0]));
     
+    let monitorId = monitor.id;
+    let userId = monitor.user_id;
 
     let dateArray = [];
     let tempArray = [];
@@ -126,7 +128,7 @@ async function getWeatherData(lat, long) {
         cloudArray.push(weatherToObjArr[i].parameters[3]);
       }
     }
-    alertData.push({dateArray, tempArray, rainArray, windArray, cloudArray});
+    alertData.push({monitorId, userId, dateArray, tempArray, rainArray, windArray, cloudArray});
   
     // For the comparison
     //console.log(alertData)
@@ -138,13 +140,15 @@ async function getWeatherData(lat, long) {
     //console.log(Object.values(alertData[1].windArray[0]).toString());
    // console.log(Object.values(alertData[1].cloudArray[0]).toString());
     console.log(alertData);
-    return alertData;
+
+    await createAlertsFromMonitorCheck(alertData);
+    //return alertData;
   };
 
 async function checkAllMonitors(){
   const monitorList = await getAllMonitors();
   
-  monitorList.forEach(monitor => compareMonitorToAPI(monitor))
+  monitorList.forEach(async monitor => await compareMonitorToAPI(monitor));
 }
 
 module.exports = {
