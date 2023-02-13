@@ -111,7 +111,7 @@ async function getWeatherData(lat, long) {
           const currDate = new Date(weatherToObjArr[i].date.slice(0, 10));
           const difference = (currDate - prevDate) / (1000 * 60 * 60 * 24);
           if (difference > 1) {
-            alertData.push({dateArray, tempArray, rainArray, windArray, cloudArray});
+            alertData.push({monitorId, userId, dateArray, tempArray, rainArray, windArray, cloudArray});
             dateArray = [];
             tempArray = [];
             rainArray = [];
