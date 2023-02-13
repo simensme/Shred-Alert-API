@@ -13,6 +13,11 @@ const {
 	deleteMonitor,
 } = require('./services/database');
 const {compareMonitorToAPI} = require('./services/WeatherCheck');
+=======
+const { getUserByEmail, createUser, createMonitor, getMonitors, getMonitorsByUserId, updatePassword, getAlertsByUserId } = require('./services/database');
+const { getWeatherData } = require('./services/getWeatherData');
+const { turnJsonToObjectArray } = require('./services/functions');
+>>>>>>> Stashed changes
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -109,6 +114,22 @@ app.post('/createAlert', async (req, res) => {
 	}
 });
 
+app.put('/updatepassword', async (req, res) => {
+  const { token } = req.headers;
+  const {oldPassword, newPassword } = req.body;
+  try {
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    const userId = payload.id;
+    const email = payload.email;
+    await updatePassword(oldPassword, newPassword, userId)
+    res.status(200).send(`Password for user with email:${email} is updated!`)
+  } catch (error) {
+    res.status(500).send({ error: error });
+    console.log(error);
+  }
+})
+
+
 //Hente alerts basert på bruker-id
 app.get('/', async (req, res) => {
 	const token = req.headers.token;
@@ -152,6 +173,7 @@ app.get('/monitors', async (req, res) => {
 	res.send(userMonitors);
 });
 
+<<<<<<< Updated upstream
 app.delete('/monitors', async (req, res) => {
 	//Hente monitor Id fra den enkelte monitor
 	//hentes gjennom state til headers eller body

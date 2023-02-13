@@ -7,9 +7,23 @@ const database = new Pool({
 	connectionString: POSTGRES_URL,
 });
 
+<<<<<<< Updated upstream
 //getUserByEmail - login
 //createUser - singup
 //updatePassword - settings
+=======
+async function updatePassword(oldPassword, newPassword, userId){
+ const user = await database.query(`
+ UPDATE
+  users
+  SET password = $2
+  FROM 
+  users
+  WHERE 
+   id = $3 AND password = $1
+ `, [oldPassword, newPassword, userId])
+}
+>>>>>>> Stashed changes
 
 //createAlerts - alert
 //getAlertsByUserId - alert
