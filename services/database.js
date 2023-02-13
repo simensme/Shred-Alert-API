@@ -119,6 +119,19 @@ async function getMonitorsByUserId(id){
   return monitors.rows;
 }
 
+async function getAlertsByUserId(userId){
+
+  const alerts = await database.query(`
+  SELECT
+    *
+  FROM
+    alerts
+  WHERE
+   user_id = $1;
+  `, [userId]);
+
+  return alerts.rows;
+}
 
 
 module.exports = {
@@ -130,5 +143,6 @@ module.exports = {
     getMonitorsByUserId,
     createAlerts, 
     updatePassword,
+    getAlertsByUserId,
 }
 

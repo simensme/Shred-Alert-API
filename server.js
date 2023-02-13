@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
-const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, getMonitorsByUserId, updatePassword } = require('./services/database');
+const { getUserByEmail, createUser, createMonitor, getMonitors, deleteMonitor, getMonitorsByUserId, updatePassword, getAlertsByUserId } = require('./services/database');
 const { getWeatherData } = require('./services/getWeatherData');
 const { turnJsonToObjectArray } = require('./services/functions');
 const app = express();
@@ -163,6 +163,17 @@ app.post('/createAlert', async (req, res) => {
 	}
 });
 
+//Hente alerts basert på bruker-id
+app.get('/', async (req, res) => {
+  const token = req.headers.token;
+  const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+  const userId = payload.id;
+
+  const userAlerts = await getAlertsByUserId(userId);
+
+  res.send(userAlerts);
+});
+
 
 app.delete('/monitors', async(req, res) =>{
   
@@ -181,7 +192,6 @@ app.get('/monitors', async (req, res)=>{
 
 
   const userMonitors = await getMonitorsByUserId(userId);
-  console.log(userMonitors, 'test');
 
   res.send(userMonitors);
 
