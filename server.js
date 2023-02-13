@@ -188,7 +188,7 @@ app.delete('/monitors', async (req, res) => {
 	//deleteMonitor(monitorId)
 });
 
-checkAllMonitors();
+//checkAllMonitors();
 
 // Listening to server
 app.listen(PORT, () => {
