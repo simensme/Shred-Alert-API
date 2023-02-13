@@ -132,7 +132,7 @@ async function deleteMonitor(id) {
 	);
 }
 
-async function delteAlert(id) {
+async function deleteAlert(id) {
 	database.query(
 		`
   DELETE FROM
@@ -186,4 +186,5 @@ module.exports = {
 	createAlerts,
 	updatePassword,
 	getAlertsByUserId,
+	deleteAlert,
 };
