@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
+<<<<<<< Updated upstream
 const {
 	getUserByEmail,
 	createUser,
@@ -15,6 +16,11 @@ const {
 } = require('./services/database');
 const {getWeatherData} = require('./services/getWeatherData');
 const {turnJsonToObjectArray} = require('./services/functions');
+=======
+const { getUserByEmail, createUser, createMonitor, getMonitors, getMonitorsByUserId, updatePassword, getAlertsByUserId } = require('./services/database');
+const { getWeatherData } = require('./services/getWeatherData');
+const { turnJsonToObjectArray } = require('./services/functions');
+>>>>>>> Stashed changes
 const app = express();
 const PORT = process.env.PORT || 3333;
 
@@ -135,21 +141,21 @@ const compareMonitorToAPI = async () => {
 	// Get the temperature of that particular date
 	// console.log(Object.values(allArrays[0].tempArray[0]).toString());
   for (let i = 0; i < weatherToObjArr.length; i++) {
-    if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp 
-    && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip 
-    && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind 
-    && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind
-    && Number(Object.values(weatherToObjArr[i].parameters[3])) >= minCloud
-    && Number(Object.values(weatherToObjArr[i].parameters[3])) <= maxCloud) {
+    if (Number(Object.values(weatherToObjArr[i].parameters[0])) >= minTemp
+      && Number(Object.values(weatherToObjArr[i].parameters[0])) <= maxTemp
+      && Number(Object.values(weatherToObjArr[i].parameters[1])) >= minPrecip
+      && Number(Object.values(weatherToObjArr[i].parameters[1])) <= maxPrecip
+      && Number(Object.values(weatherToObjArr[i].parameters[2])) >= minWind
+      && Number(Object.values(weatherToObjArr[i].parameters[2])) <= maxWind
+      && Number(Object.values(weatherToObjArr[i].parameters[3])) >= minCloud
+      && Number(Object.values(weatherToObjArr[i].parameters[3])) <= maxCloud) {
       if (!prevDate) {
         prevDate = new Date(weatherToObjArr[i].date.slice(0, 10));
       } else {
         const currDate = new Date(weatherToObjArr[i].date.slice(0, 10));
         const difference = (currDate - prevDate) / (1000 * 60 * 60 * 24);
         if (difference > 1) {
-          allArrays.push({dateArray, tempArray, rainArray, windArray, cloudArray});
+          allArrays.push({ dateArray, tempArray, rainArray, windArray, cloudArray });
           dateArray = [];
           tempArray = [];
           rainArray = [];
@@ -166,17 +172,30 @@ const compareMonitorToAPI = async () => {
       cloudArray.push(weatherToObjArr[i].parameters[3]);
     }
   }
-  allArrays.push({dateArray, tempArray, rainArray, windArray, cloudArray});
+  allArrays.push({ dateArray, tempArray, rainArray, windArray, cloudArray });
 
   // For the comparison
   console.log(allArrays)
 
+<<<<<<< Updated upstream
  // console.log(allArrays[1].dateArray[0]);
   
  // console.log(Object.values(allArrays[1].tempArray[0]).toString());
  // console.log(Object.values(allArrays[1].rainArray[0]).toString());
   //console.log(Object.values(allArrays[1].windArray[0]).toString());
  // console.log(Object.values(allArrays[1].cloudArray[0]).toString());
+=======
+  /*
+  console.log(allArrays[0].tempArray);
+ console.log(allArrays[1].tempArray);
+ console.log(allArrays[2].tempArray)
+*/
+
+  // Current Date
+  // console.log(allArrays[0].dateArray[0]);
+  // Get the temperature of that particular date
+  // console.log(Object.values(allArrays[0].tempArray[0]).toString());
+>>>>>>> Stashed changes
 
   return allArrays;
 };
@@ -197,6 +216,22 @@ app.post('/createAlert', async (req, res) => {
 		console.log(error);
 	}
 });
+
+app.put('/updatepassword', async (req, res) => {
+  const { token } = req.headers;
+  const {oldPassword, newPassword } = req.body;
+  try {
+    const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
+    const userId = payload.id;
+    const email = payload.email;
+    await updatePassword(oldPassword, newPassword, userId)
+    res.status(200).send(`Password for user with email:${email} is updated!`)
+  } catch (error) {
+    res.status(500).send({ error: error });
+    console.log(error);
+  }
+})
+
 
 //Hente alerts basert på bruker-id
 app.get('/', async (req, res) => {
@@ -241,6 +276,7 @@ app.get('/monitors', async (req, res) => {
 	res.send(userMonitors);
 });
 
+<<<<<<< Updated upstream
 app.delete('/monitors', async (req, res) => {
 	//Hente monitor Id fra den enkelte monitor
 	//hentes gjennom state til headers eller body
@@ -248,6 +284,8 @@ app.delete('/monitors', async (req, res) => {
 	//deleteMonitor(monitorId)
 });
 
+=======
+>>>>>>> Stashed changes
 // Listening to server
 app.listen(PORT, () => {
 	console.log(`The application is now listening to ${PORT}`);
