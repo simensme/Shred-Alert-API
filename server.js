@@ -170,6 +170,17 @@ app.get('/monitors', async (req, res) => {
 	res.send(userMonitors);
 });
 
+app.delete('/monitors', async (req, res) => {
+  try{
+    const { monitorId } = req.body;
+  
+    await deleteMonitor(monitorId);
+  }catch(err){ 
+    res.status(500).send({err}); 
+    console.log(err)
+  }
+});
+
 
 app.get('/alerts', async (req, res) => {
 	const token = req.headers.token;
@@ -190,17 +201,6 @@ app.delete('/alerts',  async (req, res) =>{
   res.status(500).send({err}); 
   console.log(err)
 }
-});
-
-app.delete('/monitors', async (req, res) => {
-  try{
-    const { monitorId } = req.body;
-  
-    await deleteMonitor(monitorId);
-  }catch(err){ 
-    res.status(500).send({err}); 
-    console.log(err)
-  }
 });
 
 //checkAllMonitors();
