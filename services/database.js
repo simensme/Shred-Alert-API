@@ -166,7 +166,7 @@ async function createMonitor(params, userId) {
 			params.minClouds,
 			params.maxClouds,
 			params.lat,
-			params.lon,
+			params.lng,
 		]
 	);
 }
