@@ -130,7 +130,7 @@ async function deleteAlert(id) {
 	);
 }
 
-async function getAlertsByUserId(userId) {
+async function getAlertsByUserId(id) {
 	const alerts = await database.query(
 		`
   SELECT
@@ -140,7 +140,7 @@ async function getAlertsByUserId(userId) {
   WHERE
    user_id = $1;
   `,
-		[userId]
+		[id]
 	);
 
 	return alerts.rows;

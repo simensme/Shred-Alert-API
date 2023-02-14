@@ -175,7 +175,7 @@ app.get('/alerts', async(req, res)=>{
 	const { token } = req.headers;
 	const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
 	const userId = payload.id;
-	const alertsByUser = await getAlertsbyId(userId);
+	const alertsByUser = await getAlertsByUserId(userId);
 
 	res.send(alertsByUser);
 })
