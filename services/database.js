@@ -134,15 +134,26 @@ async function getAlertsByUserId(id) {
 	const alerts = await database.query(
 		`
   SELECT
-    *
+   alerts.id, 
+   alerts.user_id, 
+   alerts.monitor_id, 
+   alerts.date_from, 
+   alerts.date_to, 
+   alerts.changed,
+   monitor.shredtag
   FROM
     alerts
+  JOIN
+    monitor
+  ON
+  alerts.monitor_id = monitor.id
   WHERE
-   user_id = $1;
+   alerts.user_id = $1
+  ORDER BY
+    date_from ASC;
   `,
 		[id]
 	);
-
 	return alerts.rows;
 }
 
