@@ -193,10 +193,14 @@ app.delete('/alerts',  async (req, res) =>{
 });
 
 app.delete('/monitors', async (req, res) => {
-	//Hente monitor Id fra den enkelte monitor
-	//hentes gjennom state til headers eller body
-	//kjøre delete fuksjon med monitorID
-	//deleteMonitor(monitorId)
+  try{
+    const { monitorId } = req.body;
+  
+    await deleteMonitor(monitorId);
+  }catch(err){ 
+    res.status(500).send({err}); 
+    console.log(err)
+  }
 });
 
 //checkAllMonitors();

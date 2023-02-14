@@ -1,14 +1,15 @@
-const {Pool} = require('pg');
+const { Pool } = require("pg");
 const POSTGRES_URL =
-	process.env.POSTGRES_URL ||
-	'postgres://postgres:1234@localhost:5432/shreddatabase';
+  process.env.POSTGRES_URL ||
+  "postgres://postgres:1234@localhost:5432/shreddatabase";
 
 const database = new Pool({
-	connectionString: POSTGRES_URL,
+  connectionString: POSTGRES_URL,
 });
 
-async function updatePassword(oldPassword, newPassword, userId){
- const user = await database.query(`
+async function updatePassword(oldPassword, newPassword, userId) {
+  const user = await database.query(
+    `
  UPDATE
   users
   SET password = $2
@@ -16,24 +17,23 @@ async function updatePassword(oldPassword, newPassword, userId){
   users
   WHERE 
    id = $3 AND password = $1
- `, [oldPassword, newPassword, userId])
+ `,
+    [oldPassword, newPassword, userId]
+  );
 }
 
 //createAlerts - alert
 //getAlertsByUserId - alert
 //deleteAlert - alert
 
-//createMonitor - monitor 
-//getMonitors - monitor 
+//createMonitor - monitor
+//getMonitors - monitor
 //getMonitorsByUserId - monitor
-//deleteMonitor - monitor 
-
-
-
+//deleteMonitor - monitor
 
 async function getUserByEmail(email) {
-	const user = await database.query(
-		`
+  const user = await database.query(
+    `
     SELECT 
       * 
     FROM 
@@ -42,28 +42,28 @@ async function getUserByEmail(email) {
       email = $1;
 
     `,
-		[email]
-	);
+    [email]
+  );
 
-	return user.rows[0];
+  return user.rows[0];
 }
 
 async function createUser(name, email, password) {
-	const alerts = database.query(
-		`
+  const alerts = database.query(
+    `
   INSERT INTO
     users(name, email, password)
   VALUES
   ($1, $2, $3);
   `,
-		[name, email, password]
-	);
-	return alerts.rows;
+    [name, email, password]
+  );
+  return alerts.rows;
 }
 
-async function getAlertsbyId(userId){
-	database.query(
-		`
+async function getAlertsbyId(userId) {
+  database.query(
+    `
 		SELECT 
 			* 
 		FROM 
@@ -76,13 +76,14 @@ async function getAlertsbyId(userId){
 		WHERE 
 			user_id = $1
 
-		`, [userId]
-	);
+		`,
+    [userId]
+  );
 }
 
 async function updatePassword(newPassword, userId) {
-	const user = await database.query(
-		`
+  const user = await database.query(
+    `
  UPDATE
   users
   SET password = $1
@@ -91,48 +92,49 @@ async function updatePassword(newPassword, userId) {
   WHERE 
    id = $2
  `,
-		[newPassword, userId]
-	);
+    [newPassword, userId]
+  );
 }
 
 async function createAlertsFromMonitorCheck(alertArray) {
-  
-  alertArray.forEach(alert => {
-    
-    if(alert.dateArray.length < 1){
+  alertArray.forEach((alert) => {
+    if (alert.dateArray.length < 1) {
       return;
-    }else{
-
-      database.query(`
+    } else {
+      database.query(
+        `
         INSERT INTO
           alerts
         VALUES
           (DEFAULT, $1, $2, $3, $4, $5)
-        `, [
+        `,
+        [
           alert.userId,
           alert.monitorId,
           alert.dateArray[0],
-          alert.dateArray[alert.dateArray.length -1],
-          false])
-      }
-    });
+          alert.dateArray[alert.dateArray.length - 1],
+          false,
+        ]
+      );
+    }
+  });
 }
 
 async function deleteAlert(id) {
-	database.query(
-		`
+  database.query(
+    `
   DELETE FROM
     alerts
   WHERE
     id = $1;
   `,
-		[id]
-	);
+    [id]
+  );
 }
 
 async function getAlertsByUserId(id) {
-	const alerts = await database.query(
-		`
+  const alerts = await database.query(
+    `
   SELECT
    alerts.id, 
    alerts.user_id, 
@@ -152,40 +154,40 @@ async function getAlertsByUserId(id) {
   ORDER BY
     date_from ASC;
   `,
-		[id]
-	);
-	return alerts.rows;
+    [id]
+  );
+  return alerts.rows;
 }
 
 async function createMonitor(params, userId) {
-	database.query(
-		`
+  database.query(
+    `
   INSERT INTO
     monitor
   VALUES
   (Default, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
   `,
-		[
-			userId,
-			params.shredName,
-			params.minTemp,
-			params.maxTemp,
-			params.minWind,
-			params.maxWind,
-			params.minDownPour,
-			params.maxDownPour,
-			params.minClouds,
-			params.maxClouds,
-			params.lat,
-			params.lng,
-		]
-	);
+    [
+      userId,
+      params.shredName,
+      params.minTemp,
+      params.maxTemp,
+      params.minWind,
+      params.maxWind,
+      params.minDownPour,
+      params.maxDownPour,
+      params.minClouds,
+      params.maxClouds,
+      params.lat,
+      params.lng,
+    ]
+  );
 }
 
 // Database Query which will be used to compare with 2-week forecast.
 async function getMonitor(monitorID) {
-	const monitor = await database.query(
-		`
+  const monitor = await database.query(
+    `
    SELECT 
      * 
    FROM 
@@ -194,15 +196,15 @@ async function getMonitor(monitorID) {
     id = $1
 
    `,
-		[monitorID]
-	);
+    [monitorID]
+  );
 
-	return monitor.rows[0];
+  return monitor.rows[0];
 }
 
 async function getMonitorsByUserId(id) {
-	const monitors = await database.query(
-		`
+  const monitors = await database.query(
+    `
   SELECT 
     *
   FROM
@@ -210,25 +212,33 @@ async function getMonitorsByUserId(id) {
   WHERE
   user_id = $1;
   `,
-		[id]
-	);
+    [id]
+  );
 
-	return monitors.rows;
+  return monitors.rows;
 }
 
 async function deleteMonitor(id) {
-	database.query(
-		`
+  database.query(
+    `
+  DELETE FROM 
+  alerts
+  WHERE
+  monitor_id = $1;
+  `,
+    [id]
+  ).then(database.query(
+    `
   DELETE FROM
     monitor
   WHERE
     id = $1;
   `,
-		[id]
-	);
+    [id]
+  ));
 }
 
-async function getAllMonitors(){
+async function getAllMonitors() {
   const monitorList = await database.query(`
   SELECT
     *
@@ -240,16 +250,16 @@ async function getAllMonitors(){
 }
 
 module.exports = {
-	getUserByEmail,
-	createUser,
-	createMonitor,
-	deleteMonitor,
-	getMonitor,
+  getUserByEmail,
+  createUser,
+  createMonitor,
+  deleteMonitor,
+  getMonitor,
   getAllMonitors,
-	getMonitorsByUserId,
-	createAlertsFromMonitorCheck,
-	updatePassword,
-	getAlertsByUserId,
-	deleteAlert,
-	getAlertsbyId, 
+  getMonitorsByUserId,
+  createAlertsFromMonitorCheck,
+  updatePassword,
+  getAlertsByUserId,
+  deleteAlert,
+  getAlertsbyId,
 };
