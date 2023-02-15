@@ -84,20 +84,6 @@ app.post('/createuser', async (req, res) => {
 	res.status(200).send({newUser});
 });
 
-app.post('/updatepassword', async (req, res) => {
-	const {token} = req.headers;
-	const {oldPassword, newPassword} = req.body;
-	try {
-		const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
-		const userId = payload.id;
-		console.log(userId);
-		await updatePassword(oldPassword, newPassword, userId);
-	} catch (error) {
-		res.status(500).send({error: error});
-		console.log(error);
-	}
-});
-
 
 //CreateNewAlert in database
 app.post('/createAlert', async (req, res) => {
@@ -114,12 +100,16 @@ app.post('/createAlert', async (req, res) => {
 app.put('/updatepassword', async (req, res) => {
   const { token } = req.headers;
   const {oldPassword, newPassword } = req.body;
+  
+
+  
   try {
     const payload = jwt.verify(token, Buffer.from(APP_SECRET, 'Base64'));
     const userId = payload.id;
     const email = payload.email;
-    await updatePassword(oldPassword, newPassword, userId)
-    res.status(200).send(`Password for user with email:${email} is updated!`)
+
+    await updatePassword(oldPassword, newPassword, userId);
+    res.status(200).json({message: `Password for user with email:${email} is updated!`});
   } catch (error) {
     res.status(500).send({ error: error });
     console.log(error);
@@ -202,6 +192,7 @@ app.delete('/alerts',  async (req, res) =>{
   console.log(err)
 }
 });
+
 
 //checkAllMonitors();
 

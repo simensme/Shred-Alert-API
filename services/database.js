@@ -8,15 +8,20 @@ const database = new Pool({
 });
 
 async function updatePassword(oldPassword, newPassword, userId) {
-  const user = await database.query(
+
+  const oldPasswordStr = toString(oldPassword);
+  const newPasswordStr = toString(newPassword);
+
+  console.log(oldPassword, newPassword);
+
+  database.query(
     `
- UPDATE
-  users
-  SET password = $2
-  FROM 
-  users
+  UPDATE
+    users
+  SET 
+    password = $2
   WHERE 
-   id = $3 AND password = $1
+    id = $3 AND password = $1;
  `,
     [oldPassword, newPassword, userId]
   );
@@ -81,20 +86,6 @@ async function getAlertsbyId(userId) {
   );
 }
 
-async function updatePassword(newPassword, userId) {
-  const user = await database.query(
-    `
- UPDATE
-  users
-  SET password = $1
-  FROM 
-  users
-  WHERE 
-   id = $2
- `,
-    [newPassword, userId]
-  );
-}
 
 async function createAlertsFromMonitorCheck(alertArray) {
   alertArray.forEach((alert) => {
