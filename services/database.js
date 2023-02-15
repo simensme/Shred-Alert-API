@@ -9,9 +9,6 @@ const database = new Pool({
 
 async function updatePassword(oldPassword, newPassword, userId) {
 
-  const oldPasswordStr = toString(oldPassword);
-  const newPasswordStr = toString(newPassword);
-
   console.log(oldPassword, newPassword);
 
   database.query(
