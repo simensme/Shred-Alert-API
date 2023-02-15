@@ -130,7 +130,9 @@ async function getAlertsByUserId(id) {
    alerts.date_from, 
    alerts.date_to, 
    alerts.changed,
-   monitor.shredtag
+   monitor.shredtag,
+   monitor.lat,
+   monitor.lng
   FROM
     alerts
   JOIN
