@@ -36,8 +36,8 @@ async function getWeatherData(lat, long) {
     const latLong = `${lat},${long}`;
   
     // Login and authorization to API:
-    const username = 'studentbrights_hansen';
-    const password = '94ih9BSkiA';
+    const username = 'brights_group';
+    const password = '74zs4DGgcL';
     const headers = {
       'Authorization': 'Basic ' + new Buffer.from(username + ':' + password).toString('base64')
     };
