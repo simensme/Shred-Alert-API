@@ -8,7 +8,6 @@ const database = new Pool({
 });
 
 async function updatePassword(oldPassword, newPassword, userId) {
-
   console.log(oldPassword, newPassword);
 
   database.query(
@@ -83,7 +82,6 @@ async function getAlertsbyId(userId) {
   );
 }
 
-
 async function createAlertsFromMonitorCheck(alertArray) {
   alertArray.forEach((alert) => {
     if (alert.dateArray.length < 1) {
@@ -130,7 +128,7 @@ async function getAlertsByUserId(id) {
    alerts.date_from, 
    alerts.date_to, 
    alerts.changed,
-   monitor.shredtag,
+   monitor.shredName,
    monitor.lat,
    monitor.lng
   FROM
@@ -209,23 +207,27 @@ async function getMonitorsByUserId(id) {
 }
 
 async function deleteMonitor(id) {
-  database.query(
-    `
+  database
+    .query(
+      `
   DELETE FROM 
   alerts
   WHERE
   monitor_id = $1;
   `,
-    [id]
-  ).then(database.query(
-    `
+      [id]
+    )
+    .then(
+      database.query(
+        `
   DELETE FROM
     monitor
   WHERE
     id = $1;
   `,
-    [id]
-  ));
+        [id]
+      )
+    );
 }
 
 async function getAllMonitors() {
