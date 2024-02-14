@@ -68,12 +68,12 @@ async function getAlertsbyId(userId) {
 		SELECT 
 			* 
 		FROM 
-			alerts
+			alert
 		JOIN 
 			monitor 
 		
 		ON 
-			alerts.monitor_id = monitor.id
+			alert.monitor_id = monitor.id
 		WHERE 
 			user_id = $1
 
@@ -90,7 +90,7 @@ async function createAlertsFromMonitorCheck(alertArray) {
       database.query(
         `
         INSERT INTO
-          alerts
+          alert
         VALUES
           (DEFAULT, $1, $2, $3, $4, $5)
         `,
@@ -110,7 +110,7 @@ async function deleteAlert(id) {
   database.query(
     `
   DELETE FROM
-    alerts
+    alert
   WHERE
     id = $1;
   `,
@@ -122,23 +122,23 @@ async function getAlertsByUserId(id) {
   const alerts = await database.query(
     `
   SELECT
-   alerts.id, 
-   alerts.user_id, 
-   alerts.monitor_id, 
-   alerts.date_from, 
-   alerts.date_to, 
-   alerts.changed,
+   alert.id, 
+   alert.user_id, 
+   alert.monitor_id, 
+   alert.date_from, 
+   alert.date_to, 
+   alert.changed,
    monitor.shredName,
    monitor.lat,
    monitor.lng
   FROM
-    alerts
+    alert
   JOIN
     monitor
   ON
-  alerts.monitor_id = monitor.id
+  alert.monitor_id = monitor.id
   WHERE
-   alerts.user_id = $1
+   alert.user_id = $1
   ORDER BY
     date_from ASC;
   `,
@@ -211,7 +211,7 @@ async function deleteMonitor(id) {
     .query(
       `
   DELETE FROM 
-  alerts
+  alert
   WHERE
   monitor_id = $1;
   `,
