@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 const POSTGRES_URL =
   process.env.POSTGRES_URL ||
-  "postgres://postgres:1234@localhost:5432/shreddatabase";
+  "postgres://postgres:1234@localhost:5432/shREDalert";
 
 const database = new Pool({
   connectionString: POSTGRES_URL,
