@@ -50,7 +50,7 @@ async function getUserByEmail(email) {
 }
 
 async function createUser(name, email, password) {
-  const alerts = database.query(
+  const user = database.query(
     `
   INSERT INTO
     users(name, email, password)
@@ -59,7 +59,7 @@ async function createUser(name, email, password) {
   `,
     [name, email, password]
   );
-  return alerts.rows;
+  return user.rows;
 }
 
 async function getAlertsbyId(userId) {

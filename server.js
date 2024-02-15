@@ -26,6 +26,13 @@ app.use(express.json());
 
 const APP_SECRET = "søtt-griseri";
 
+//JSON FOR TESTING CREATEUSER
+// {
+// "name": "Eirik",
+// "email": "test@meg.no",
+// "password": "1234"
+// }
+
 //getUserByEmail - login
 //createUser - singup
 //updatePassword - settings
@@ -82,9 +89,14 @@ app.get("/session", async (req, res) => {
 
 app.post("/createuser", async (req, res) => {
   const { name, email, password } = req.body;
-  const newUser = await createUser(name, email, password);
 
-  res.status(200).send({ newUser });
+  try {
+    const newUser = await createUser(name, email, password);
+
+    res.status(200).send({ newUser });
+  } catch (error) {
+    res.status(500).send({ error });
+  }
 });
 
 //CreateNewAlert in database
