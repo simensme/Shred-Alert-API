@@ -50,20 +50,23 @@ async function getUserByEmail(email) {
 }
 
 async function createUser(name, email, password) {
-  const user = database.query(
-    `
-  INSERT INTO
-    users(name, email, password)
-  VALUES
-  ($1, $2, $3);
-  `,
-    [name, email, password]
-  );
-  return user.rows;
+  try {
+    await database.query(
+      `
+      INSERT INTO
+      users(name, email, password)
+      VALUES
+      ($1, $2, $3);
+      `,
+      [name, email, password]
+    );
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getAlertsbyId(userId) {
-  database.query(
+  await database.query(
     `
 		SELECT 
 			* 
