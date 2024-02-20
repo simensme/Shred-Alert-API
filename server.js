@@ -73,7 +73,7 @@ app.get("/session", async (req, res) => {
 
   try {
     const payload = jwt.verify(token, Buffer.from(APP_SECRET, "Base64"));
-    res.json({ message: `You are logged in as ${payload.email}` });
+    res.send(`${payload.email}`);
   } catch (error) {
     res.status(401).send({ error: "Invalid token" });
   }
