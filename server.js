@@ -26,13 +26,6 @@ app.use(express.json());
 
 const APP_SECRET = "søtt-griseri";
 
-//JSON FOR TESTING CREATEUSER
-// {
-// "name": "Eirik",
-// "email": "test@meg.no",
-// "password": "1234"
-// }
-
 //getUserByEmail - login
 //createUser - singup
 //updatePassword - settings
@@ -58,7 +51,7 @@ app.post("/login", async (req, res) => {
     }
 
     if (password !== user.password) {
-      res.status(401).send({ error: "Wrong password!" });
+      res.status(401).send({ error: "Wrong username or password!" });
       return;
     }
 
@@ -69,8 +62,7 @@ app.post("/login", async (req, res) => {
       },
       Buffer.from(APP_SECRET, "base64")
     );
-
-    res.json({ token });
+    res.status(200).json({ token });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -93,7 +85,7 @@ app.post("/createuser", async (req, res) => {
   try {
     await createUser(name, email, password);
 
-    res.status(200).send("User created successfully!");
+    res.status(200).send({ success: "User created successfully!" });
   } catch (error) {
     res.status(500).json({ error });
   }
