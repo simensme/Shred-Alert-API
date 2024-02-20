@@ -210,27 +210,31 @@ async function getMonitorsByUserId(id) {
 }
 
 async function deleteMonitor(id) {
-  database
-    .query(
-      `
-  DELETE FROM 
-  alert
-  WHERE
-  monitor_id = $1;
-  `,
-      [id]
-    )
-    .then(
-      database.query(
+  try {
+    await database
+      .query(
         `
-  DELETE FROM
-    monitor
-  WHERE
-    id = $1;
-  `,
+      DELETE FROM 
+      alert
+      WHERE
+      monitor_id = $1;
+      `,
         [id]
       )
-    );
+      .then(
+        await database.query(
+          `
+          DELETE FROM
+          monitor
+          WHERE
+          id = $1;
+          `,
+          [id]
+        )
+      );
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function getAllMonitors() {
@@ -245,16 +249,16 @@ async function getAllMonitors() {
 }
 
 module.exports = {
-  getUserByEmail,
   createUser,
+  getUserByEmail,
+  updatePassword,
   createMonitor,
-  deleteMonitor,
   getMonitor,
   getAllMonitors,
   getMonitorsByUserId,
-  createAlertsFromMonitorCheck,
-  updatePassword,
+  deleteMonitor,
+  getAlertsbyId,
   getAlertsByUserId,
   deleteAlert,
-  getAlertsbyId,
+  createAlertsFromMonitorCheck,
 };
